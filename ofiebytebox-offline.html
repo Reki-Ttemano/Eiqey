@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OFIEBYTEBOX</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface-2:#272727;--surface-3:#303030;--text:#f1f1f1;--dim:#a0a0a0;--dim-2:#6d6d6d;--border:#2e2e2e;--hover:#242424;--accent:#ff0033;--accent-h:#d9001e;--topbar-h:56px;--sidebar-w:220px}
+body.light{--bg:#fff;--surface:#f5f5f5;--surface-2:#ececec;--surface-3:#e0e0e0;--text:#0f0f0f;--dim:#606060;--dim-2:#909090;--border:#e0e0e0;--hover:#efefef}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#555}
+::-webkit-scrollbar-track{background:transparent}
+
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:var(--bg);display:flex;align-items:center;padding:0 16px;gap:8px;z-index:200}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;transition:background .15s}
+.icon-btn:hover{background:var(--hover)}
+.icon-btn svg{width:22px;height:22px;fill:currentColor}
+.logo{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:10px;flex:0 0 auto}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#ff0033,#cc0029);border-radius:8px;display:grid;place-items:center;box-shadow:0 2px 10px rgba(255,0,51,.35)}
+.logo-mark svg{width:20px;height:20px;fill:#fff}
+.logo-text{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.search-form{flex:1;max-width:620px;margin:0 20px;display:flex;height:40px;min-width:0}
+.search-form input{flex:1;min-width:0;height:100%;padding:0 18px;background:var(--surface);border:1px solid var(--border);border-right:none;border-radius:20px 0 0 20px;color:var(--text);outline:none;transition:border-color .15s;font-size:14px}
+.search-form input::placeholder{color:var(--dim)}
+.search-form input:focus{border-color:var(--accent)}
+.search-form button{width:64px;border:1px solid var(--border);background:var(--surface-2);border-radius:0 20px 20px 0;display:grid;place-items:center;transition:background .15s}
+.search-form button:hover{background:var(--surface-3)}
+.search-form button svg{width:20px;height:20px;fill:var(--dim)}
+.top-right{margin-left:auto;display:flex;gap:6px;align-items:center;flex:0 0 auto}
+.user-btn{width:34px;height:34px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;transition:transform .15s;overflow:hidden;background-size:cover;background-position:center;flex:0 0 auto}
+.user-btn:hover{transform:scale(1.08)}
+.btn-login{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px;transition:background .15s}
+.btn-login:hover{background:var(--hover)}
+.btn-login .av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
+
+.dropdown{position:absolute;top:52px;right:14px;width:260px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:8px;z-index:400;box-shadow:0 14px 44px rgba(0,0,0,.6);display:none}
+.dropdown.open{display:block}
+.dd-head{display:flex;gap:12px;align-items:center;padding:12px 12px 14px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.dd-av{width:40px;height:40px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:16px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.dd-name{font-size:14.5px;font-weight:600}
+.dd-handle{font-size:12px;color:var(--dim);margin-top:2px}
+.dd-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;font-size:13.5px;cursor:pointer;transition:background .13s}
+.dd-item:hover{background:var(--hover)}
+.dd-item .mi{width:20px;text-align:center;font-size:15px}
+.dd-sep{height:1px;background:var(--border);margin:6px 8px}
+
+.layout{display:flex;padding-top:var(--topbar-h);min-height:100vh}
+.sidebar{position:fixed;top:var(--topbar-h);left:0;bottom:0;width:var(--sidebar-w);overflow-y:auto;padding:12px 8px;background:var(--bg);z-index:100;transition:width .2s}
+body.collapsed .sidebar{width:72px}
+.sidebar-section{margin-bottom:14px}
+.sidebar-label{font-size:11px;color:var(--dim-2);padding:8px 12px 4px;font-weight:600;letter-spacing:.6px;text-transform:uppercase}
+.side-link{display:flex;align-items:center;gap:16px;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:14px;transition:background .15s;user-select:none;white-space:nowrap}
+.side-link:hover{background:var(--hover)}
+.side-link.active{background:var(--surface-2);font-weight:600}
+.side-link .si{font-size:17px;width:24px;text-align:center;flex:0 0 24px;line-height:1}
+.side-link .stext{overflow:hidden;text-overflow:ellipsis}
+body.collapsed .sidebar-label,body.collapsed .stext,body.collapsed .sidebar-foot{display:none}
+body.collapsed .side-link{justify-content:center;padding:12px 0}
+
+.main{margin-left:var(--sidebar-w);flex:1;min-height:calc(100vh - var(--topbar-h));padding:20px 24px 60px;transition:margin-left .2s}
+body.collapsed .main{margin-left:72px}
+.page-title{font-size:22px;font-weight:700;margin-bottom:18px;letter-spacing:-.3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px 16px}
+.v-card{cursor:pointer;transition:transform .15s}
+.v-card:hover{transform:translateY(-2px)}
+.v-thumb{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--surface-2);margin-bottom:12px}
+.v-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.v-thumb .fallback{width:100%;height:100%;display:grid;place-items:center;font-size:44px;opacity:.5}
+.v-duration{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.85);color:#fff;font-size:12px;font-weight:600;padding:2px 6px;border-radius:4px}
+.v-meta{display:flex;gap:12px}
+.v-av{width:36px;height:36px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:14px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.v-info{flex:1;min-width:0}
+.v-title{font-size:14.5px;font-weight:600;line-height:1.4;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.v-ch{font-size:13px;color:var(--dim);line-height:1.4}
+.v-ch:hover{color:var(--text)}
+.v-stats{font-size:12.5px;color:var(--dim)}
+
+.watch{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+.player-wrap{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;margin-bottom:16px}
+.player-wrap video{width:100%;height:100%;display:block;background:#000}
+.player-wrap .missing{display:grid;place-items:center;height:100%;color:var(--dim);font-size:14px;text-align:center;padding:20px;line-height:1.7}
+.watch-title{font-size:20px;font-weight:700;line-height:1.35;margin-bottom:12px}
+.watch-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.watch-ch{display:flex;align-items:center;gap:12px;min-width:0}
+.watch-ch-info{min-width:0}
+.watch-ch-name{font-size:14.5px;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.watch-ch-subs{font-size:12px;color:var(--dim)}
+.btn-sub{padding:9px 18px;border-radius:20px;background:var(--text);color:var(--bg);font-weight:600;font-size:13.5px;transition:.15s;margin-left:8px;white-space:nowrap}
+.btn-sub:hover{opacity:.85}
+.btn-sub.on{background:var(--surface-2);color:var(--text)}
+.watch-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.act-btn{display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:20px;background:var(--surface-2);font-size:13.5px;transition:.15s;white-space:nowrap}
+.act-btn:hover{background:var(--surface-3)}
+.act-btn.on{background:var(--text);color:var(--bg)}
+.watch-desc{background:var(--surface);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.65;margin-bottom:24px;white-space:pre-wrap;word-break:break-word}
+.watch-desc .wl{font-weight:600;margin-bottom:6px;font-size:13px;color:var(--dim)}
+.comments{margin-top:16px}
+.comments-title{font-size:16px;font-weight:600;margin-bottom:18px}
+.cmt-form{display:flex;gap:12px;align-items:flex-start;margin-bottom:26px}
+.cmt-av{width:40px;height:40px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:15px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.cmt-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);padding:8px 2px;outline:none;font-size:14.5px;color:var(--text);resize:none;font-family:inherit;min-height:38px;transition:border-color .15s}
+.cmt-input:focus{border-color:var(--text)}
+.cmt-submit{padding:8px 18px;border-radius:20px;background:var(--accent);color:#fff;font-size:13.5px;font-weight:600;transition:.15s}
+.cmt-submit:hover{background:var(--accent-h)}
+.cmt{display:flex;gap:14px;margin-bottom:22px}
+.cmt-body{flex:1;min-width:0}
+.cmt-head{font-size:13px;margin-bottom:6px}
+.cmt-head b{font-weight:600;font-size:13.5px}
+.cmt-head span{color:var(--dim);margin-left:8px}
+.cmt-text{font-size:14.5px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.related-title{font-size:15px;font-weight:600;margin-bottom:14px}
+.rel-card{display:flex;gap:10px;margin-bottom:12px;cursor:pointer;padding:4px;border-radius:10px;transition:background .15s}
+.rel-card:hover{background:var(--hover)}
+.rel-thumb{position:relative;width:160px;flex:0 0 160px;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:var(--surface-2)}
+.rel-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.rel-thumb .fallback{width:100%;height:100%;display:grid;place-items:center;font-size:28px;opacity:.5}
+.rel-info{flex:1;min-width:0}
+.rel-title{font-size:13.5px;font-weight:600;line-height:1.35;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rel-ch{font-size:12px;color:var(--dim)}
+
+.ch-hero{display:flex;gap:26px;align-items:center;padding:20px 0 30px;border-bottom:1px solid var(--border);margin-bottom:26px;flex-wrap:wrap}
+.ch-av-lg{width:96px;height:96px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:40px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.ch-info{flex:1;min-width:0}
+.ch-name{font-size:28px;font-weight:700;letter-spacing:-.4px;margin-bottom:8px}
+.ch-stats{font-size:13.5px;color:var(--dim);margin-bottom:10px}
+.ch-desc{font-size:14px;color:var(--dim);line-height:1.6;max-width:640px;white-space:pre-wrap}
+.ch-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.form-page{max-width:680px;margin:0 auto}
+.form-title{font-size:24px;font-weight:700;margin-bottom:8px;text-align:center}
+.form-desc{font-size:14px;color:var(--dim);text-align:center;margin-bottom:28px}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--dim);margin-bottom:8px;letter-spacing:.3px}
+.field .hint{font-size:12px;color:var(--dim-2);margin-top:6px}
+.field input[type=text],.field input[type=password],.field textarea,.field select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;outline:none;font-size:14px;transition:border-color .15s;color:var(--text);font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:100px;line-height:1.6}
+.file-drop{border:2px dashed var(--border);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:.18s;background:var(--bg)}
+.file-drop:hover,.file-drop.dragover{border-color:var(--accent);background:rgba(255,0,51,.05)}
+.file-drop .fd-icon{font-size:38px;margin-bottom:10px;display:block;opacity:.7}
+.file-drop .fd-text{font-size:14px;font-weight:600;margin-bottom:4px}
+.file-drop .fd-hint{font-size:12.5px;color:var(--dim)}
+.file-drop.has-file{border-color:var(--accent);background:rgba(255,0,51,.06)}
+.form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:26px}
+.btn{padding:12px 26px;border-radius:10px;font-size:14px;font-weight:600;transition:.15s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-h)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:var(--surface-2);color:var(--text)}
+.btn-ghost:hover{background:var(--surface-3)}
+.btn-block{width:100%}
+.form-switch{text-align:center;font-size:13.5px;color:var(--dim);margin-top:20px}
+.form-switch a{color:var(--accent);font-weight:600;cursor:pointer}
+.form-switch a:hover{text-decoration:underline}
+
+.studio-tabs{display:flex;gap:6px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:2px;overflow-x:auto;scrollbar-width:none}
+.studio-tabs::-webkit-scrollbar{display:none}
+.studio-tab{padding:10px 18px;font-size:14px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;cursor:pointer;transition:.15s;white-space:nowrap}
+.studio-tab:hover{color:var(--text)}
+.studio-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.studio-panel{display:none}
+.studio-panel.active{display:block}
+.avatar-upload{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.avatar-preview{width:88px;height:88px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:34px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden;border:2px solid var(--border)}
+.my-videos-list{display:flex;flex-direction:column;gap:10px}
+.my-video{display:flex;gap:14px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;align-items:center}
+.my-video-thumb{width:120px;flex:0 0 120px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:var(--surface-2);position:relative}
+.my-video-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.my-video-thumb .fallback{width:100%;height:100%;display:grid;place-items:center;font-size:24px;opacity:.5}
+.my-video-info{flex:1;min-width:0}
+.my-video-title{font-size:14px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-video-stats{font-size:12px;color:var(--dim)}
+.my-video-actions{display:flex;gap:6px;flex:0 0 auto}
+.mini-btn{padding:7px 12px;border-radius:8px;background:var(--surface-2);font-size:12.5px;font-weight:600;transition:.15s;white-space:nowrap}
+.mini-btn:hover{background:var(--surface-3)}
+.mini-btn.danger:hover{background:rgba(255,0,51,.15);color:var(--accent)}
+
+.settings-page{max-width:760px;margin:0 auto}
+.settings-hero{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.settings-hero-icon{width:56px;height:56px;border-radius:14px;flex:0 0 auto;background:linear-gradient(135deg,#0091ff,#0066cc);display:grid;place-items:center;font-size:26px;box-shadow:0 6px 20px rgba(0,145,255,.35)}
+.settings-hero h1{font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px}
+.settings-hero p{font-size:13.5px;color:var(--dim)}
+.settings-group{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px}
+.settings-group-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.settings-group-icon{width:38px;height:38px;border-radius:10px;flex:0 0 auto;background:var(--surface-2);display:grid;place-items:center;font-size:18px}
+.settings-group-title{font-size:15.5px;font-weight:700;letter-spacing:-.2px}
+.settings-group-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.setting-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row-info{flex:1;min-width:0}
+.setting-row-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.setting-row-desc{font-size:12.5px;color:var(--dim);line-height:1.55}
+.setting-row-control{flex:0 0 auto}
+.setting-row-control .big-val{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;font-size:14px;font-weight:600;letter-spacing:-.2px}
+.segmented{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+.segmented button{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;color:var(--dim);transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.segmented button:hover{color:var(--text)}
+.segmented button.on{background:var(--surface-3);color:var(--text)}
+body.light .segmented button.on{background:var(--text);color:var(--bg)}
+.switch{position:relative;width:44px;height:24px;border-radius:12px;background:var(--surface-3);cursor:pointer;transition:.2s;flex:0 0 auto}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(20px)}
+.slider-row{display:flex;align-items:center;gap:14px;min-width:180px}
+.slider-row input[type=range]{flex:1;height:4px;accent-color:var(--accent);cursor:pointer}
+.slider-value{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--dim);min-width:44px;text-align:right}
+.lang-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.lang-option{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border:2px solid var(--border);border-radius:11px;cursor:pointer;transition:.15s}
+.lang-option:hover{border-color:var(--dim-2)}
+.lang-option.on{border-color:var(--accent);background:rgba(255,0,51,.06)}
+.lang-option-flag{width:34px;height:34px;border-radius:8px;flex:0 0 auto;display:grid;place-items:center;font-size:20px;background:var(--surface-2)}
+.lang-option-info{flex:1;min-width:0}
+.lang-option-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.lang-option-sub{font-size:11.5px;color:var(--dim)}
+.lang-option-check{width:20px;height:20px;border-radius:50%;flex:0 0 auto;border:2px solid var(--border);display:grid;place-items:center;font-size:11px;color:#fff;transition:.15s}
+.lang-option.on .lang-option-check{background:var(--accent);border-color:var(--accent)}
+
+/* 团队卡片 */
+.team-card{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.team-card:last-child{border-bottom:none}
+.team-badge{width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.team-badge.eiqey{background:linear-gradient(135deg,#0091ff,#0055aa)}
+.team-badge.ds{background:linear-gradient(135deg,#4d6bfe,#2a4bd4)}
+.team-badge.rk{background:linear-gradient(135deg,#ff6b9d,#c44b7e)}
+.team-info{flex:1;min-width:0}
+.team-name{font-size:14.5px;font-weight:700;margin-bottom:3px;letter-spacing:-.2px}
+.team-role{font-size:12.5px;color:var(--dim);line-height:1.5}
+.team-copy{margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);text-align:center;font-size:12px;color:var(--dim-2);line-height:1.7}
+
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:600}
+.status.on{background:rgba(0,196,106,.15);color:#00c46a}
+.status.off{background:rgba(255,71,87,.15);color:#ff4757}
+
+.empty{text-align:center;padding:70px 20px;color:var(--dim)}
+.empty .ee{font-size:52px;display:block;margin-bottom:16px;opacity:.5}
+.empty .et{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px}
+.empty .es{font-size:13.5px;line-height:1.7}
+.empty .eact{display:inline-block;margin-top:18px;padding:11px 24px;border-radius:22px;background:var(--accent);color:#fff;font-weight:600;font-size:13.5px;transition:.15s}
+.empty .eact:hover{background:var(--accent-h)}
+
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);background:var(--surface-2);color:var(--text);padding:12px 22px;border-radius:10px;font-size:13.5px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.5);border:1px solid var(--border);opacity:0;pointer-events:none;transition:.25s;z-index:900;max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.success{border-color:#00c46a}
+.toast.error{border-color:var(--accent)}
+
+.admin-wrap{max-width:1080px;margin:0 auto}
+.admin-hero{background:linear-gradient(135deg,#0d1f2e,#061520);border:1px solid #1f3a52;border-radius:16px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden}
+.admin-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 90% 10%,rgba(255,0,51,.15),transparent 55%),radial-gradient(circle at 10% 90%,rgba(0,196,106,.1),transparent 55%);pointer-events:none}
+.admin-hero-inner{position:relative;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.admin-hero-icon{width:64px;height:64px;border-radius:16px;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#8b001c);display:grid;place-items:center;font-size:30px;box-shadow:0 8px 28px rgba(255,0,51,.4)}
+.admin-hero-text{flex:1;min-width:0}
+.admin-hero-text h1{font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px}
+.admin-hero-text p{font-size:13.5px;color:var(--dim);line-height:1.6}
+.admin-hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:14px;background:rgba(0,196,106,.15);color:#00c46a;font-size:11.5px;font-weight:700;letter-spacing:.5px}
+.admin-hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:#00c46a;box-shadow:0 0 8px #00c46a;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.4}}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.admin-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:.15s}
+.admin-stat:hover{border-color:#2a4d6c;transform:translateY(-2px)}
+.admin-stat-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px}
+.admin-stat-value{font-size:24px;font-weight:800;letter-spacing:-.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.admin-stat-sub{font-size:11.5px;color:var(--dim-2);margin-top:6px}
+.admin-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px}
+.admin-section-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.admin-section-icon{width:38px;height:38px;border-radius:10px;flex:0 0 auto;background:var(--surface-2);display:grid;place-items:center;font-size:18px}
+.admin-section-title{font-size:16px;font-weight:700;letter-spacing:-.2px}
+.admin-section-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.admin-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.admin-row:last-child{border-bottom:none}
+.admin-row-av{width:38px;height:38px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:15px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.admin-row-info{flex:1;min-width:0}
+.admin-row-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.admin-row-sub{font-size:12px;color:var(--dim);display:flex;gap:12px;flex-wrap:wrap}
+.admin-row-actions{display:flex;gap:6px;flex:0 0 auto}
+.admin-btn{padding:7px 13px;border-radius:8px;background:var(--surface-2);font-size:12.5px;font-weight:600;transition:.15s;white-space:nowrap}
+.admin-btn:hover{background:var(--surface-3)}
+.admin-btn.danger{background:rgba(255,0,51,.12);color:#ff5c5c;border:1px solid rgba(255,0,51,.25)}
+.admin-btn.danger:hover{background:rgba(255,0,51,.22)}
+.admin-btn.warn{background:rgba(255,176,32,.12);color:#ffb020;border:1px solid rgba(255,176,32,.25)}
+.admin-btn.warn:hover{background:rgba(255,176,32,.22)}
+.admin-danger-zone{background:linear-gradient(135deg,rgba(255,0,51,.06),rgba(255,0,51,.02));border:1px solid rgba(255,0,51,.28);border-radius:14px;padding:22px;margin-bottom:20px}
+.admin-danger-zone .admin-section-head{border-bottom-color:rgba(255,0,51,.2)}
+.admin-danger-zone .admin-section-icon{background:rgba(255,0,51,.15);color:#ff5c5c}
+.admin-danger-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.admin-danger-btn{padding:13px 24px;border-radius:11px;font-size:14px;font-weight:700;transition:.15s;display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer}
+.admin-danger-btn.nuke{background:linear-gradient(135deg,#ff0033,#c8001e);color:#fff;box-shadow:0 6px 22px rgba(255,0,51,.4)}
+.admin-danger-btn.nuke:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,0,51,.55)}
+.admin-danger-btn.secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.admin-danger-btn.secondary:hover{background:var(--surface-3)}
+.admin-log{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;max-height:200px;overflow-y:auto;color:var(--dim);line-height:1.7}
+.admin-log .log-ok{color:#00c46a}
+.admin-log .log-err{color:#ff5c5c}
+.admin-log .log-warn{color:#ffb020}
+.admin-log .log-info{color:#00a1d6}
+
+.account-switcher-scrim{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:800;display:grid;place-items:center;padding:20px;animation:asFade .2s}
+@keyframes asFade{from{opacity:0}to{opacity:1}}
+.account-switcher{width:100%;max-width:520px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.6);animation:asPop .25s cubic-bezier(.2,.9,.3,1.1);max-height:88vh;overflow-y:auto}
+@keyframes asPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}
+.as-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.as-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.as-close{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:var(--surface-2);transition:.15s}
+.as-close:hover{background:var(--surface-3)}
+.as-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.as-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:.15s;border:2px solid transparent;background:var(--surface-2)}
+.as-item:hover{background:var(--surface-3)}
+.as-item.on{border-color:var(--accent);background:rgba(255,0,51,.08);cursor:default}
+.as-av{width:46px;height:46px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#ff0033,#ff7a00);display:grid;place-items:center;font-size:19px;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.as-info{flex:1;min-width:0}
+.as-name{font-size:15px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.as-sub{font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.as-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:11px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;flex:0 0 auto}
+.as-empty{text-align:center;padding:30px 20px;color:var(--dim);font-size:13.5px;line-height:1.7}
+.as-empty .ae{font-size:36px;display:block;margin-bottom:12px;opacity:.5}
+.as-actions{display:flex;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.as-btn{flex:1;padding:12px;border-radius:11px;font-size:13.5px;font-weight:600;transition:.15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.as-btn.primary{background:linear-gradient(135deg,var(--accent),#cc0029);color:#fff}
+.as-btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(255,0,51,.35)}
+.as-btn.ghost{background:var(--surface-2);color:var(--text)}
+.as-btn.ghost:hover{background:var(--surface-3)}
+
+@media (max-width:1180px){.watch{grid-template-columns:1fr}}
+@media (max-width:900px){
+  .sidebar{transform:translateX(-100%);width:240px !important;padding:12px;box-shadow:0 0 40px rgba(0,0,0,.6);z-index:300;transition:transform .2s}
+  body.sidebar-open .sidebar{transform:translateX(0)}
+  body.collapsed .sidebar{transform:translateX(-100%)}
+  body.collapsed .sidebar-label,body.collapsed .stext,body.collapsed .sidebar-foot{display:block}
+  body.collapsed .side-link{justify-content:flex-start;padding:9px 12px}
+  .main{margin-left:0 !important;padding:14px 14px 60px}
+  body.sidebar-open::after{content:'';position:fixed;inset:0;top:var(--topbar-h);background:rgba(0,0,0,.55);z-index:250}
+  .search-form{margin:0 8px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px 12px}
+}
+@media (max-width:620px){
+  .logo-text{display:none}
+  .grid{grid-template-columns:1fr}
+  .ch-hero{flex-direction:column;align-items:flex-start;text-align:left}
+  .ch-actions{width:100%}
+  .form-card{padding:20px 16px}
+  .my-video{flex-direction:column;align-items:stretch}
+  .my-video-thumb{width:100%;flex:0 0 auto}
+  .admin-hero{padding:20px}
+  .admin-stat-value{font-size:19px}
+  .lang-options{grid-template-columns:1fr}
+  .setting-row{flex-direction:column;align-items:flex-start}
+  .setting-row-control{width:100%}
+  .segmented{width:100%;justify-content:center}
+  .account-switcher{padding:20px}
+  .as-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuBtn" title="菜单"><svg viewBox="0 0 24 24"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg></button>
+  <a class="logo" href="#/">
+    <span class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.31L18.51 8 12 11.69 5.49 8 12 4.31zM5 9.87l6 3.46v6.86l-6-3.33V9.87zm8 10.32v-6.86l6-3.46v6.99l-6 3.33z"/></svg></span>
+    <span class="logo-text">OFIEBYTEBOX</span>
+  </a>
+  <form class="search-form" id="searchForm">
+    <input id="searchInput" placeholder="搜索视频..." autocomplete="off">
+    <button type="submit" aria-label="搜索"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
+  </form>
+  <div class="top-right" id="topRight"></div>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="content"></main>
+</div>
+<div id="dropdownRoot"></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ===== i18n ===== */
+const I18N = {
+  zh: {
+    searchPlaceholder: '搜索视频...', login: '登录',
+    sidebar: { home:'首页', subs:'我的订阅', create:'创作', upload:'上传视频', studio:'工作室', myChannel:'我的频道', account:'账号', login:'登录', register:'注册', explore:'探索', browse:'全部视频', settings:'设置', serverSettings:'服务器设置', adminPanel:'管理面板', backToFront:'返回前台' },
+    home: { recommend:'推荐视频', noVideos:'还没有任何视频', beFirst:'成为第一个上传视频的人吧', uploadFirst:'上传第一个视频', registerToCreate:'注册开始创作', allVideos:'全部视频', noVideosShort:'暂无视频' },
+    video: { views:'次观看', subscribers:'位订阅者', videos:'个视频' },
+    watch: { subscribe:'订阅', subscribed:'已订阅', share:'分享', noDesc:'暂无简介', comments:'条评论', loginToComment:'后即可发表评论', loginAction:'登录', noComments:'还没有评论，来抢沙发吧！', writeComment:'写下你的评论...', postComment:'评论', related:'相关视频', viewsAndTime:'次观看 · ', linkCopiedToast:'链接已复制到剪贴板', videoMissing:'视频文件丢失', videoMissingHint:'该视频的本地文件已被清除或丢失。你可以在工作室中删除这条记录。', commentEmpty:'评论不能为空', commentPosted:'评论已发布', unsubscribed:'已取消订阅', subscribedToast:'订阅成功', unknownChannel:'未知频道', deletedUser:'已注销用户' },
+    channel: { stopped:'此频道已停用', ownerStopped:'频道所有者已关闭此频道', noDesc:'这个频道还没有简介', manage:'管理频道', subscribe:'订阅', youHaveNoVideos:'你还没有上传视频', channelHasNoVideos:'这个频道还没有视频', uploadVideo:'上传视频', stoppedBadge:'已停用' },
+    subs: { title:'我的订阅', noSubs:'还没有订阅任何频道', noSubsHint:'浏览视频时点击订阅按钮即可关注频道', goBrowse:'去逛逛' },
+    search: { resultPrefix:'搜索「', resultMid:'」 · ', resultSuffix:' 个结果', noResult:'没有找到相关视频', tryOther:'换个关键词试试吧', enterKeyword:'输入关键词搜索视频' },
+    auth: { welcomeBack:'欢迎回来', loginDesc:'登录你的 OFIEBYTEBOX 账号', username:'用户名', password:'密码', inputUsername:'输入用户名', inputPassword:'输入密码', loginBtn:'登录', noAccount:'还没有账号？', registerNow:'立即注册', createAccount:'创建账号', registerDesc:'加入 OFIEBYTEBOX，开始你的视频之旅', usernameRange:'2-20 个字符', usernameHint:'这是你的登录名，无法修改', passwordMin:'至少 4 个字符', confirmPassword:'确认密码', reenterPassword:'再次输入密码', channelName:'频道名称', channelNamePlaceholder:'你的频道叫什么？', channelNameHint:'注册后会自动为你创建一个频道', createBtn:'创建账号', hasAccount:'已有账号？', backToLogin:'返回登录', usernameTooShort:'用户名至少 2 个字符', usernameInvalid:'用户名只能包含字母、数字、下划线或中文', passwordTooShort:'密码至少 4 个字符', passwordMismatch:'两次密码不一致', fillChannelName:'请填写频道名称', usernameTaken:'用户名已被使用', userNotFound:'用户不存在', wrongPassword:'密码错误', loginSuccess:'登录成功', registerSuccess:'注册成功，欢迎加入！', fillAll:'请填写完整信息' },
+    upload: { needLogin:'需要登录才能上传视频', goLogin:'去登录', noChannel:'你没有频道', title:'上传视频', publishTo:'发布到频道「', publishToEnd:'」', videoTitle:'视频标题', videoTitlePlaceholder:'给视频起个标题', videoDesc:'视频简介', videoDescPlaceholder:'介绍一下你的视频...', videoFile:'视频文件', clickSelectVideo:'点击选择视频文件', dropOrDrag:'或拖拽到此处 · 支持 mp4 / webm / mov 等', coverOptional:'自定义封面（可选）', clickSelectCover:'点击选择封面图片', autoThumbnail:'不上传将自动从视频中截取', cancel:'取消', publish:'发布视频', processing:'处理中...', fillTitle:'请填写视频标题', selectVideo:'请选择视频文件', dropVideoOnly:'请拖入视频文件', dropImageOnly:'请拖入图片文件', publishSuccess:'视频发布成功！', uploadFailed:'上传失败：' },
+    studio: { title:'工作室', channelSettings:'频道设置', myVideos:'我的视频', accountSettings:'账号设置', channelIcon:'频道图标', changeIcon:'更换图标', squareHint:'建议使用正方形图片', channelName:'频道名称', channelDesc:'频道简介', channelDescPlaceholder:'介绍一下你的频道...', channelStatus:'频道状态', enabled:'已开启', disabled:'已停用', allCanSee:'所有用户都能看到你的视频', onlyYouSee:'只有你能看到自己的视频', saveChanges:'保存修改', noVideos:'还没有上传视频', uploadFirst:'上传第一个视频', username:'用户名', usernameCannotChange:'用户名无法修改', avatar:'头像', changeAvatar:'更换头像', removeAvatar:'移除头像', dataBackup:'数据备份', exportMeta:'导出元数据', importBackup:'导入备份', dangerZone:'危险操作', deleteAccount:'永久删除账号', deleteAccountHint:'删除后你的账号、频道、', deleteAccountHintMid:' 个视频文件以及所有评论点赞都将被永久清除，此操作无法撤销', view:'查看', delete:'删除', channelUpdated:'频道已更新', channelEnabled:'频道已开启', channelDisabled:'频道已停用', avatarUpdated:'头像已更新', avatarRemoved:'头像已移除', iconUpdated:'图标已更新', channelNameEmpty:'频道名称不能为空', videoDeleted:'视频已删除', deleteVideoConfirm:'确定删除视频「', deleteVideoConfirmEnd:'」吗？此操作不可撤销。' },
+    settings: { title:'设置', desc:'自定义你的 OFIEBYTEBOX 使用体验', appearance:'外观', appearanceDesc:'主题和界面显示', theme:'主题', themeDesc:'选择深色或浅色外观', themeDark:'深色', themeLight:'浅色', language:'语言', languageDesc:'选择界面显示语言', langZh:'简体中文', langZhSub:'Chinese (Simplified)', langEn:'English', langEnSub:'英语', playback:'播放', playbackDesc:'视频播放行为', autoplay:'自动播放', autoplayDesc:'打开视频时自动开始播放', defaultVolume:'默认音量', defaultVolumeDesc:'播放新视频时的默认音量', dataMgmt:'数据管理', dataMgmtDesc:'本地数据清理与恢复', clearCache:'清除缓存', clearCacheDesc:'清空临时数据，不会删除视频和账号', clearCacheBtn:'清除', exportAll:'导出全部数据', exportAllDesc:'生成 JSON 备份文件（不含视频）', exportBtn:'导出', importAll:'导入备份', importAllDesc:'从 JSON 文件恢复数据', importBtn:'导入',
+      team:'创作团队', teamDesc:'本项目由以下团队开发与维护',
+      teamPublisher:'出品方', teamPublisherValue:'易球（Eiqey）信息技术', teamPublisherRole:'产品设计与技术支持',
+      teamMembers:'团队成员', teamMembersValue:'DeepSeek · Reki-Ttemano', teamMembersRole:'AI 协作开发 · 项目发起与维护',
+      about:'关于', aboutDesc:'版本和说明', version:'版本', versionVal:'1.0.0', storageUsage:'存储占用',
+      copyright:'版权所有', copyrightValue:'© 2026 易球（Eiqey）信息技术',
+      savedToast:'设置已保存', cacheCleared:'缓存已清除', langChanged:'语言已切换', themeChanged:'主题已切换' },
+    common: { cancel:'取消', confirm:'确定', close:'关闭', save:'保存', delete:'删除', search:'搜索', switchTheme:'切换主题', logout:'退出登录', studio:'工作室', upload:'上传视频', settings:'设置', myChannel:'我的频道' },
+    time: { justNow:'刚刚', minutesAgo:' 分钟前', hoursAgo:' 小时前', daysAgo:' 天前', weeksAgo:' 周前', monthsAgo:' 个月前', yearsAgo:' 年前' },
+    toast: { loggedOut:'已退出登录', storageFull:'存储空间不足，请删除部分视频', exportDone:'数据已导出（不含视频文件）', importSuccess:'导入成功', importFailed:'导入失败：', importFormatError:'格式不正确', importConfirm:'将导入 ', importConfirmMid:' 个视频元数据、', importConfirmMid2:' 个用户。此操作会覆盖现有数据（视频文件除外），确定继续？' },
+    deleteAcc: { title:'删除账号确认', aboutTo:'即将永久删除账号「', aboutToEnd:'」：', bulletAccount:'• 账号信息', bulletChannel:'• 频道「', bulletChannelEnd:'」', bulletNoChannel:'无', bulletVideos1:'• ', bulletVideos2:' 个视频文件', bulletComments1:'• ', bulletComments2:' 条评论', bulletOthers:'• 所有订阅、点赞记录', cannotUndo:'此操作不可撤销！', confirmPrompt:'请输入以下文字以确认删除：我已了解并确认删除我的账号', cancelled:'已取消删除', textMismatch:'确认文本不匹配，账号未删除', deleted1:'账号已删除（清除 ', deleted2:' 个视频文件）', failed:'删除失败：' },
+    titles: { upload:'上传视频', login:'登录', register:'注册', studio:'工作室', settings:'设置', subs:'我的订阅', browse:'全部视频', serverSettings:'服务器设置', notFound:'找不到页面' },
+    account: { switch:'切换账号', title:'切换账号', current:'当前', noChannel:'无频道', videos:'个视频', addNew:'添加新账号', logout:'退出登录', empty:'还没有其他账号', emptyHint:'点击下方「添加新账号」来注册一个', switched:'已切换到 ', alreadyCurrent:'已经是当前账号' }
+  },
+  en: {
+    searchPlaceholder: 'Search videos...', login: 'Sign in',
+    sidebar: { home:'Home', subs:'Subscriptions', create:'Create', upload:'Upload', studio:'Studio', myChannel:'My Channel', account:'Account', login:'Sign in', register:'Register', explore:'Explore', browse:'All Videos', settings:'Settings', serverSettings:'Server Settings', adminPanel:'Admin Panel', backToFront:'Back to site' },
+    home: { recommend:'Recommended', noVideos:'No videos yet', beFirst:'Be the first to upload a video', uploadFirst:'Upload the first video', registerToCreate:'Register to start creating', allVideos:'All Videos', noVideosShort:'No videos' },
+    video: { views:'views', subscribers:'subscribers', videos:'videos' },
+    watch: { subscribe:'Subscribe', subscribed:'Subscribed', share:'Share', noDesc:'No description', comments:'comments', loginToComment:'to leave a comment', loginAction:'Sign in', noComments:'No comments yet. Be the first!', writeComment:'Write a comment...', postComment:'Comment', related:'Related videos', viewsAndTime:'views · ', linkCopiedToast:'Link copied to clipboard', videoMissing:'Video file missing', videoMissingHint:'The local file for this video has been cleared or lost. You can delete this record in Studio.', commentEmpty:'Comment cannot be empty', commentPosted:'Comment posted', unsubscribed:'Unsubscribed', subscribedToast:'Subscribed', unknownChannel:'Unknown channel', deletedUser:'Deleted user' },
+    channel: { stopped:'This channel is disabled', ownerStopped:'The channel owner has disabled this channel', noDesc:'This channel has no description yet', manage:'Manage Channel', subscribe:'Subscribe', youHaveNoVideos:'You have no videos yet', channelHasNoVideos:'This channel has no videos yet', uploadVideo:'Upload a video', stoppedBadge:'Disabled' },
+    subs: { title:'My Subscriptions', noSubs:'No subscriptions yet', noSubsHint:'Click Subscribe on a channel to follow it', goBrowse:'Browse videos' },
+    search: { resultPrefix:'Search "', resultMid:'" · ', resultSuffix:' results', noResult:'No videos found', tryOther:'Try a different keyword', enterKeyword:'Enter a keyword to search' },
+    auth: { welcomeBack:'Welcome back', loginDesc:'Sign in to your OFIEBYTEBOX account', username:'Username', password:'Password', inputUsername:'Enter username', inputPassword:'Enter password', loginBtn:'Sign in', noAccount:"Don't have an account?", registerNow:'Register now', createAccount:'Create Account', registerDesc:'Join OFIEBYTEBOX and start your video journey', usernameRange:'2-20 characters', usernameHint:'This is your login name and cannot be changed', passwordMin:'At least 4 characters', confirmPassword:'Confirm Password', reenterPassword:'Re-enter password', channelName:'Channel Name', channelNamePlaceholder:'What is your channel called?', channelNameHint:'A channel will be created for you automatically', createBtn:'Create Account', hasAccount:'Already have an account?', backToLogin:'Back to sign in', usernameTooShort:'Username must be at least 2 characters', usernameInvalid:'Username can only contain letters, numbers, underscores, or Chinese characters', passwordTooShort:'Password must be at least 4 characters', passwordMismatch:'Passwords do not match', fillChannelName:'Please enter a channel name', usernameTaken:'Username is already taken', userNotFound:'User not found', wrongPassword:'Wrong password', loginSuccess:'Signed in', registerSuccess:'Registered successfully. Welcome!', fillAll:'Please fill in all fields' },
+    upload: { needLogin:'You need to sign in to upload videos', goLogin:'Sign in', noChannel:'You have no channel', title:'Upload Video', publishTo:'Publish to channel "', publishToEnd:'"', videoTitle:'Video Title', videoTitlePlaceholder:'Give your video a title', videoDesc:'Description', videoDescPlaceholder:'Describe your video...', videoFile:'Video File', clickSelectVideo:'Click to select a video file', dropOrDrag:'Or drag and drop · mp4 / webm / mov supported', coverOptional:'Custom Thumbnail (optional)', clickSelectCover:'Click to select a cover image', autoThumbnail:'A frame will be captured automatically if not provided', cancel:'Cancel', publish:'Publish Video', processing:'Processing...', fillTitle:'Please enter a video title', selectVideo:'Please select a video file', dropVideoOnly:'Please drop a video file', dropImageOnly:'Please drop an image file', publishSuccess:'Video published!', uploadFailed:'Upload failed: ' },
+    studio: { title:'Studio', channelSettings:'Channel', myVideos:'My Videos', accountSettings:'Account', channelIcon:'Channel Icon', changeIcon:'Change Icon', squareHint:'Square image recommended', channelName:'Channel Name', channelDesc:'Channel Description', channelDescPlaceholder:'Describe your channel...', channelStatus:'Channel Status', enabled:'Enabled', disabled:'Disabled', allCanSee:'Everyone can see your videos', onlyYouSee:'Only you can see your videos', saveChanges:'Save Changes', noVideos:'No videos uploaded yet', uploadFirst:'Upload your first video', username:'Username', usernameCannotChange:'Username cannot be changed', avatar:'Avatar', changeAvatar:'Change Avatar', removeAvatar:'Remove Avatar', dataBackup:'Data Backup', exportMeta:'Export metadata', importBackup:'Import backup', dangerZone:'Danger Zone', deleteAccount:'Permanently Delete Account', deleteAccountHint:'Deleting will remove your account, channel, ', deleteAccountHintMid:' video files, and all comments and likes. This action cannot be undone.', view:'View', delete:'Delete', channelUpdated:'Channel updated', channelEnabled:'Channel enabled', channelDisabled:'Channel disabled', avatarUpdated:'Avatar updated', avatarRemoved:'Avatar removed', iconUpdated:'Icon updated', channelNameEmpty:'Channel name cannot be empty', videoDeleted:'Video deleted', deleteVideoConfirm:'Delete video "', deleteVideoConfirmEnd:'"? This action cannot be undone.' },
+    settings: { title:'Settings', desc:'Customize your OFIEBYTEBOX experience', appearance:'Appearance', appearanceDesc:'Theme and interface display', theme:'Theme', themeDesc:'Choose dark or light appearance', themeDark:'Dark', themeLight:'Light', language:'Language', languageDesc:'Choose interface display language', langZh:'简体中文', langZhSub:'Chinese (Simplified)', langEn:'English', langEnSub:'English', playback:'Playback', playbackDesc:'Video playback behavior', autoplay:'Autoplay', autoplayDesc:'Automatically play videos when opened', defaultVolume:'Default Volume', defaultVolumeDesc:'Default volume for new videos', dataMgmt:'Data Management', dataMgmtDesc:'Local data cleanup and restore', clearCache:'Clear Cache', clearCacheDesc:'Clear temporary data without deleting videos or accounts', clearCacheBtn:'Clear', exportAll:'Export All Data', exportAllDesc:'Generate JSON backup file (without videos)', exportBtn:'Export', importAll:'Import Backup', importAllDesc:'Restore data from a JSON file', importBtn:'Import',
+      team:'Credits', teamDesc:'This project is developed and maintained by',
+      teamPublisher:'Publisher', teamPublisherValue:'Eiqey Information Technology', teamPublisherRole:'Product design and technical support',
+      teamMembers:'Team Members', teamMembersValue:'DeepSeek · Reki-Ttemano', teamMembersRole:'AI co-development · Project initiation and maintenance',
+      about:'About', aboutDesc:'Version and information', version:'Version', versionVal:'1.0.0', storageUsage:'Storage Usage',
+      copyright:'Copyright', copyrightValue:'© 2026 Eiqey Information Technology',
+      savedToast:'Settings saved', cacheCleared:'Cache cleared', langChanged:'Language changed', themeChanged:'Theme changed' },
+    common: { cancel:'Cancel', confirm:'Confirm', close:'Close', save:'Save', delete:'Delete', search:'Search', switchTheme:'Switch Theme', logout:'Sign out', studio:'Studio', upload:'Upload', settings:'Settings', myChannel:'My Channel' },
+    time: { justNow:'just now', minutesAgo:' min ago', hoursAgo:' hours ago', daysAgo:' days ago', weeksAgo:' weeks ago', monthsAgo:' months ago', yearsAgo:' years ago' },
+    toast: { loggedOut:'Signed out', storageFull:'Storage full, please delete some videos', exportDone:'Data exported (videos excluded)', importSuccess:'Import successful', importFailed:'Import failed: ', importFormatError:'Invalid format', importConfirm:'Will import ', importConfirmMid:' video metadata, ', importConfirmMid2:' users. This will overwrite existing data (except video files). Continue?' },
+    deleteAcc: { title:'Delete Account Confirmation', aboutTo:'About to permanently delete account "', aboutToEnd:'":', bulletAccount:'• Account info', bulletChannel:'• Channel "', bulletChannelEnd:'"', bulletNoChannel:'none', bulletVideos1:'• ', bulletVideos2:' video files', bulletComments1:'• ', bulletComments2:' comments', bulletOthers:'• All subscriptions and likes', cannotUndo:'This action cannot be undone!', confirmPrompt:'Please type the following text to confirm: I understand and confirm deleting my account', cancelled:'Deletion cancelled', textMismatch:'Text does not match. Account not deleted.', deleted1:'Account deleted (removed ', deleted2:' video files)', failed:'Delete failed: ' },
+    titles: { upload:'Upload', login:'Sign in', register:'Register', studio:'Studio', settings:'Settings', subs:'Subscriptions', browse:'All Videos', serverSettings:'Server Settings', notFound:'Not Found' },
+    account: { switch:'Switch account', title:'Switch account', current:'Current', noChannel:'No channel', videos:'videos', addNew:'Add new account', logout:'Sign out', empty:'No other accounts', emptyHint:'Click "Add new account" below to register one', switched:'Switched to ', alreadyCurrent:'Already the current account' }
+  }
+};
+
+function t(path){
+  const parts = path.split('.');
+  let cur = I18N[data.lang] || I18N.zh;
+  for (const p of parts){
+    if (cur && typeof cur === 'object' && p in cur) cur = cur[p];
+    else return path;
+  }
+  return cur;
+}
+
+/* ===== 基础工具 ===== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const now = () => Date.now();
+const BRAND = 'OFIEBYTEBOX';
+
+function fmtTime(ts){
+  const diff = (now() - ts) / 1000;
+  if (diff < 60) return t('time.justNow');
+  if (diff < 3600) return Math.floor(diff / 60) + t('time.minutesAgo');
+  if (diff < 86400) return Math.floor(diff / 3600) + t('time.hoursAgo');
+  if (diff < 86400 * 7) return Math.floor(diff / 86400) + t('time.daysAgo');
+  if (diff < 86400 * 30) return Math.floor(diff / 86400 / 7) + t('time.weeksAgo');
+  if (diff < 86400 * 365) return Math.floor(diff / 86400 / 30) + t('time.monthsAgo');
+  return Math.floor(diff / 86400 / 365) + t('time.yearsAgo');
+}
+function fmtViews(n){ if (n < 1000) return String(n); if (n < 1000000) return (n/1000).toFixed(1) + 'K'; return (n/1000000).toFixed(1) + 'M'; }
+function fmtSize(bytes){ if (bytes < 1024) return bytes + ' B'; if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB'; if (bytes < 1024*1024*1024) return (bytes/1024/1024).toFixed(1) + ' MB'; return (bytes/1024/1024/1024).toFixed(2) + ' GB'; }
+function fmtDuration(seconds){
+  if (!seconds || !isFinite(seconds)) return '0:00';
+  seconds = Math.floor(seconds);
+  const h = Math.floor(seconds/3600), m = Math.floor((seconds%3600)/60), s = seconds%60;
+  if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  return m + ':' + String(s).padStart(2,'0');
+}
+const COLORS = ['#ff0033','#ff6b00','#ffb800','#00c46a','#0984e3','#6c5ce7','#e84393','#00cec9','#d63031','#e17055','#00a8ff','#a55eea'];
+function colorOf(str){ let h=0; for (let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) >>> 0; return COLORS[h % COLORS.length]; }
+
+/* ===== 存储层（键名保持 yourtube_* 以兼容已有数据） ===== */
+const LS_KEY = 'yourtube_data_v2';
+const IDB_NAME = 'yourtube_blobs';
+const IDB_VERSION = 3;
+let data = { users:[], channels:[], videos:[], subscriptions:[], currentUserId:null, theme:'dark', lang:'zh', settings:{ autoplay:true, defaultVolume:1 } };
+
+function loadData(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw){
+      const parsed = JSON.parse(raw);
+      data = Object.assign(data, parsed);
+      if (!data.settings) data.settings = { autoplay:true, defaultVolume:1 };
+    }
+  } catch(e){ console.warn('加载数据失败', e); }
+}
+function saveData(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+  catch(e){ if (e.name === 'QuotaExceededError') toast(t('toast.storageFull'), 'error'); }
+}
+
+/* ===== IndexedDB ===== */
+let IDB = null;
+let IDBReady = null;
+
+function initIDB(){
+  if (IDBReady) return IDBReady;
+  IDBReady = new Promise((resolve, reject) => {
+    let req;
+    try { req = indexedDB.open(IDB_NAME, IDB_VERSION); }
+    catch(e){ IDBReady = null; return reject(e); }
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs');
+      if (!db.objectStoreNames.contains('dirhandles')) db.createObjectStore('dirhandles');
+    };
+    req.onsuccess = () => {
+      IDB = req.result;
+      IDB.onclose = () => { IDB = null; IDBReady = null; };
+      resolve(IDB);
+    };
+    req.onerror = () => { IDBReady = null; reject(req.error || new Error('IndexedDB open failed')); };
+    req.onblocked = () => { IDBReady = null; reject(new Error('IndexedDB blocked')); };
+  });
+  return IDBReady;
+}
+
+async function ensureIDB(){
+  if (IDB) return IDB;
+  try { return await initIDB(); }
+  catch(e){
+    console.warn('IDB open failed, retry once:', e);
+    IDBReady = null;
+    return await initIDB();
+  }
+}
+
+async function putBlob(id, blob){ const db = await ensureIDB(); return new Promise((res, rej) => { const tx = db.transaction('blobs','readwrite'); tx.objectStore('blobs').put(blob, id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+async function getBlob(id){ const db = await ensureIDB(); return new Promise((res, rej) => { const tx = db.transaction('blobs','readonly'); const r = tx.objectStore('blobs').get(id); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function deleteBlob(id){ const db = await ensureIDB(); return new Promise((res, rej) => { const tx = db.transaction('blobs','readwrite'); tx.objectStore('blobs').delete(id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+async function clearAllBlobs(){ const db = await ensureIDB(); return new Promise((res, rej) => { const tx = db.transaction('blobs','readwrite'); tx.objectStore('blobs').clear(); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+function deleteIDBDatabase(){
+  return new Promise((res) => {
+    if (IDB){ try { IDB.close(); } catch(e){} IDB = null; }
+    IDBReady = null;
+    const req = indexedDB.deleteDatabase(IDB_NAME);
+    req.onsuccess = () => res(); req.onerror = () => res(); req.onblocked = () => res();
+  });
+}
+
+/* ===== 密码哈希 ===== */
+async function hashPassword(password, salt){
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(salt + '::' + password));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ===== 状态查询 ===== */
+function getCurrentUser(){ return data.currentUserId ? data.users.find(u => u.id === data.currentUserId) || null : null; }
+function getUser(id){ return data.users.find(u => u.id === id) || null; }
+function getChannel(id){ return data.channels.find(c => c.id === id) || null; }
+function getChannelByOwner(userId){ return data.channels.find(c => c.ownerId === userId) || null; }
+function getVideo(id){ return data.videos.find(v => v.id === id) || null; }
+function isSubscribed(userId, channelId){ return data.subscriptions.some(s => s.userId === userId && s.channelId === channelId); }
+function getSubscriberCount(channelId){ return data.subscriptions.filter(s => s.channelId === channelId).length; }
+
+/* ===== Toast ===== */
+let toastTimer = null;
+function toast(msg, type){
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ===== 页面标题 ===== */
+function setPageTitle(){
+  const hash = location.hash.slice(1) || '/';
+  const [path, queryStr] = hash.split('?');
+  const query = Object.fromEntries(new URLSearchParams(queryStr || ''));
+  const parts = path.split('/').filter(Boolean);
+  const p = parts[0] || '';
+  let title = BRAND;
+  const T = key => t('titles.' + key);
+  if (p === 'officalsettings') title = T('serverSettings') + ' - ' + BRAND;
+  else if (p === 'watch'){ const v = getVideo(parts[1]); if (v) title = v.title + ' - ' + BRAND; }
+  else if (p === 'channel'){ const ch = getChannel(parts[1]); if (ch) title = ch.name + ' - ' + BRAND; }
+  else if (p === 'upload') title = T('upload') + ' - ' + BRAND;
+  else if (p === 'login') title = T('login') + ' - ' + BRAND;
+  else if (p === 'register') title = T('register') + ' - ' + BRAND;
+  else if (p === 'studio') title = T('studio') + ' - ' + BRAND;
+  else if (p === 'settings') title = T('settings') + ' - ' + BRAND;
+  else if (p === 'subs') title = T('subs') + ' - ' + BRAND;
+  else if (p === 'browse') title = T('browse') + ' - ' + BRAND;
+  else if (p === 'search'){ const q = query.q || ''; if (q) title = (data.lang === 'en' ? 'Search: ' + q : '搜索「' + q + '」') + ' - ' + BRAND; }
+  document.title = title;
+}
+
+/* ===== 顶栏 ===== */
+function renderTopRight(){
+  const user = getCurrentUser();
+  const el = $('topRight');
+  if (user){
+    const av = user.avatar
+      ? `<div class="user-btn" id="userBtn" style="background-image:url('${esc(user.avatar)}')"></div>`
+      : `<div class="user-btn" id="userBtn">${esc(user.username[0].toUpperCase())}</div>`;
+    el.innerHTML = av;
+    $('userBtn').addEventListener('click', toggleUserMenu);
+  } else {
+    el.innerHTML = `<button class="btn-login" id="loginBtn"><span class="av">?</span><span>${esc(t('login'))}</span></button>`;
+    $('loginBtn').addEventListener('click', () => { location.hash = '#/login'; });
+  }
+}
+
+function toggleUserMenu(){
+  const root = $('dropdownRoot');
+  const existing = $('userMenu');
+  if (existing){ existing.remove(); return; }
+  const user = getCurrentUser();
+  if (!user) return;
+  const channel = getChannelByOwner(user.id);
+  const av = user.avatar ? `<div class="dd-av" style="background-image:url('${esc(user.avatar)}')"></div>` : `<div class="dd-av">${esc(user.username[0].toUpperCase())}</div>`;
+  root.innerHTML = `
+    <div class="dropdown open" id="userMenu">
+      <div class="dd-head">${av}<div style="min-width:0"><div class="dd-name">${esc(user.username)}</div><div class="dd-handle">${channel ? '@' + esc(channel.name) : '—'}</div></div></div>
+      ${channel ? `<a class="dd-item" href="#/channel/${channel.id}"><span class="mi">📺</span>${esc(t('common.myChannel'))}</a>` : ''}
+      <a class="dd-item" href="#/studio"><span class="mi">⚙️</span>${esc(t('common.studio'))}</a>
+      <a class="dd-item" href="#/upload"><span class="mi">⬆️</span>${esc(t('common.upload'))}</a>
+      <div class="dd-sep"></div>
+      <a class="dd-item" href="#/subs"><span class="mi">🎯</span>${esc(t('sidebar.subs'))}</a>
+      <a class="dd-item" href="#/settings"><span class="mi">🔧</span>${esc(t('common.settings'))}</a>
+      <div class="dd-sep"></div>
+      <div class="dd-item" id="ddSwitch"><span class="mi">🔄</span>${esc(t('account.switch'))}</div>
+      <div class="dd-item" id="ddTheme"><span class="mi">${data.theme==='dark'?'☀️':'🌙'}</span>${esc(t('common.switchTheme'))}</div>
+      <div class="dd-item" id="ddLogout" style="color:#ff5c5c"><span class="mi">🚪</span>${esc(t('common.logout'))}</div>
+    </div>`;
+  $('ddSwitch').addEventListener('click', e => { e.preventDefault(); closeDropdown(); showAccountSwitcher(); });
+  $('ddTheme').addEventListener('click', e => { e.preventDefault(); data.theme = data.theme === 'dark' ? 'light' : 'dark'; saveData(); applyTheme(); closeDropdown(); toast(t('settings.themeChanged')); });
+  $('ddLogout').addEventListener('click', e => { e.preventDefault(); logoutCurrentUser(); });
+}
+
+function logoutCurrentUser(){
+  data.currentUserId = null;
+  saveData();
+  closeDropdown();
+  renderTopRight();
+  renderSidebar();
+  if (location.hash && location.hash !== '#/' && location.hash !== ''){
+    location.hash = '#/';
+  } else {
+    route();
+  }
+  toast(t('toast.loggedOut'));
+}
+
+function closeDropdown(){ const m = $('userMenu'); if (m) m.remove(); }
+
+/* ===== 快捷切换账号 ===== */
+function showAccountSwitcher(){
+  if ($('accountSwitcher')) return;
+
+  const currentUser = getCurrentUser();
+  const users = data.users.slice().sort((a, b) => {
+    if (a.id === data.currentUserId) return -1;
+    if (b.id === data.currentUserId) return 1;
+    return b.createdAt - a.createdAt;
+  });
+
+  const scrim = document.createElement('div');
+  scrim.className = 'account-switcher-scrim';
+  scrim.id = 'accountSwitcher';
+
+  const usersHTML = users.length === 0
+    ? `<div class="as-empty"><span class="ae">👥</span>${esc(t('account.empty'))}<br>${esc(t('account.emptyHint'))}</div>`
+    : users.map(u => {
+        const ch = getChannelByOwner(u.id);
+        const vidCount = ch ? data.videos.filter(v => v.channelId === ch.id).length : 0;
+        const isCurrent = u.id === data.currentUserId;
+        const av = u.avatar
+          ? `<div class="as-av" style="background-image:url('${esc(u.avatar)}')"></div>`
+          : `<div class="as-av" style="background:${colorOf(u.username)}">${esc(u.username[0].toUpperCase())}</div>`;
+        const sub = ch
+          ? '@' + esc(ch.name) + ' · ' + vidCount + ' ' + esc(t('account.videos'))
+          : esc(t('account.noChannel'));
+        return `
+          <div class="as-item ${isCurrent ? 'on' : ''}" data-switch-user="${u.id}">
+            ${av}
+            <div class="as-info">
+              <div class="as-name">${esc(u.username)}</div>
+              <div class="as-sub">${sub}</div>
+            </div>
+            ${isCurrent ? `<span class="as-badge">✓ ${esc(t('account.current'))}</span>` : ''}
+          </div>`;
+      }).join('');
+
+  scrim.innerHTML = `
+    <div class="account-switcher">
+      <div class="as-head">
+        <div class="as-title">${esc(t('account.title'))}</div>
+        <button class="as-close" id="asClose" title="${esc(t('common.close'))}">✕</button>
+      </div>
+      <div class="as-list">${usersHTML}</div>
+      <div class="as-actions">
+        <button class="as-btn primary" id="asAddNew">➕ ${esc(t('account.addNew'))}</button>
+        ${currentUser ? `<button class="as-btn ghost" id="asLogout">🚪 ${esc(t('account.logout'))}</button>` : ''}
+      </div>
+    </div>`;
+
+  document.body.appendChild(scrim);
+
+  const close = () => scrim.remove();
+  $('asClose').addEventListener('click', close);
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
+
+  const escHandler = e => {
+    if (e.key === 'Escape'){ close(); document.removeEventListener('keydown', escHandler); }
+  };
+  document.addEventListener('keydown', escHandler);
+
+  scrim.querySelectorAll('[data-switch-user]').forEach(el => {
+    el.addEventListener('click', () => {
+      const targetId = el.dataset.switchUser;
+      if (targetId === data.currentUserId){ toast(t('account.alreadyCurrent')); return; }
+      const targetUser = getUser(targetId);
+      if (!targetUser) return;
+
+      data.currentUserId = targetId;
+      saveData();
+      close();
+      renderTopRight();
+      renderSidebar();
+
+      const hash = location.hash.slice(1) || '/';
+      const p = hash.split('/')[0].split('?')[0];
+      if (['studio', 'upload', 'settings', 'subs'].includes(p)){
+        location.hash = '#/';
+      } else {
+        route();
+      }
+      toast(t('account.switched') + targetUser.username, 'success');
+    });
+  });
+
+  $('asAddNew').addEventListener('click', () => { close(); location.hash = '#/register'; });
+
+  const logoutBtn = $('asLogout');
+  if (logoutBtn){
+    logoutBtn.addEventListener('click', () => {
+      close();
+      logoutCurrentUser();
+    });
+  }
+}
+
+/* ===== 侧边栏 ===== */
+function renderSidebar(){
+  const user = getCurrentUser();
+  const channel = user ? getChannelByOwner(user.id) : null;
+  const el = $('sidebar');
+  const path = location.hash.slice(1).split('?')[0] || '/';
+  if (path.startsWith('officalsettings')){
+    el.innerHTML = `
+      <div class="sidebar-section">
+        <div class="sidebar-label">${esc(t('sidebar.serverSettings'))}</div>
+        <div class="side-link active"><span class="si">🖥️</span><span class="stext">${esc(t('sidebar.adminPanel'))}</span></div>
+      </div>
+      <div class="sidebar-section"><a class="side-link" href="#/"><span class="si">↩️</span><span class="stext">${esc(t('sidebar.backToFront'))}</span></a></div>`;
+    return;
+  }
+  const item = (hash, icon, label) => {
+    const active = hash === '/' ? path === '/' : path.startsWith(hash.slice(1));
+    return `<a class="side-link ${active ? 'active' : ''}" href="${hash}"><span class="si">${icon}</span><span class="stext">${esc(label)}</span></a>`;
+  };
+  const footLine = user
+    ? `${data.videos.length} ${esc(t('video.videos'))} · ${data.channels.length} ${esc(t('sidebar.myChannel')).toLowerCase()}`
+    : `${data.videos.length} ${esc(t('video.videos'))}`;
+  el.innerHTML = `
+    <div class="sidebar-section">${item('#/', '🏠', t('sidebar.home'))}${item('#/subs', '🎯', t('sidebar.subs'))}</div>
+    ${user ? `
+      <div class="sidebar-section">
+        <div class="sidebar-label">${esc(t('sidebar.create'))}</div>
+        ${item('#/upload', '⬆️', t('sidebar.upload'))}
+        ${item('#/studio', '⚙️', t('sidebar.studio'))}
+        ${channel ? item('#/channel/' + channel.id, '📺', t('sidebar.myChannel')) : ''}
+      </div>` : `
+      <div class="sidebar-section">
+        <div class="sidebar-label">${esc(t('sidebar.account'))}</div>
+        ${item('#/login', '🔑', t('sidebar.login'))}
+        ${item('#/register', '✨', t('sidebar.register'))}
+      </div>`}
+    <div class="sidebar-section">
+      <div class="sidebar-label">${esc(t('sidebar.explore'))}</div>
+      ${item('#/browse', '🔍', t('sidebar.browse'))}
+    </div>
+    <div class="sidebar-section">${item('#/settings', '🔧', t('sidebar.settings'))}</div>
+    <div class="sidebar-foot" style="padding:16px 12px;font-size:11.5px;color:var(--dim-2);line-height:1.7">
+      ${BRAND} Demo<br>${footLine}
+    </div>`;
+}
+
+/* ===== 主题 ===== */
+function applyTheme(){ document.body.classList.toggle('light', data.theme === 'light'); }
+
+/* ===== 路由 ===== */
+function route(){
+  const hash = location.hash.slice(1) || '/';
+  const [path, queryStr] = hash.split('?');
+  const query = Object.fromEntries(new URLSearchParams(queryStr || ''));
+  const parts = path.split('/').filter(Boolean);
+
+  setPageTitle();
+  closeDropdown();
+  document.body.classList.remove('sidebar-open');
+  window.scrollTo(0, 0);
+  if (window._activeBlobUrl){ try { URL.revokeObjectURL(window._activeBlobUrl); } catch(e){} window._activeBlobUrl = null; }
+
+  renderSidebar();
+
+  if (parts[0] === 'officalsettings') return renderAdmin();
+  if (parts.length === 0) return renderHome();
+  if (parts[0] === 'watch') return renderWatch(parts[1]);
+  if (parts[0] === 'channel') return renderChannel(parts[1]);
+  if (parts[0] === 'upload') return renderUpload();
+  if (parts[0] === 'login') return renderLogin();
+  if (parts[0] === 'register') return renderRegister();
+  if (parts[0] === 'studio') return renderStudio();
+  if (parts[0] === 'settings') return renderSettings();
+  if (parts[0] === 'search') return renderSearch(query.q || '');
+  if (parts[0] === 'subs') return renderSubs();
+  if (parts[0] === 'browse') return renderBrowse();
+  renderNotFound();
+}
+
+/* ===== 卡片 ===== */
+function videoCard(v){
+  const ch = getChannel(v.channelId);
+  const user = ch ? getUser(ch.ownerId) : null;
+  const av = user && user.avatar
+    ? `<div class="v-av" style="background-image:url('${esc(user.avatar)}')"></div>`
+    : `<div class="v-av" style="background:${ch ? colorOf(ch.name) : '#ff0033'}">${ch ? esc(ch.name[0].toUpperCase()) : '?'}</div>`;
+  const thumb = v.thumbnail ? `<img src="${esc(v.thumbnail)}" alt="">` : `<div class="fallback">🎬</div>`;
+  return `
+    <div class="v-card" onclick="location.hash='#/watch/${v.id}'">
+      <div class="v-thumb">${thumb}<div class="v-duration">${fmtDuration(v.duration)}</div></div>
+      <div class="v-meta">${av}
+        <div class="v-info">
+          <div class="v-title">${esc(v.title)}</div>
+          <div class="v-ch" onclick="event.stopPropagation();location.hash='#/channel/${v.channelId}'">${esc(ch ? ch.name : t('watch.unknownChannel'))}</div>
+          <div class="v-stats">${fmtViews(v.views)} ${esc(t('video.views'))} · ${fmtTime(v.createdAt)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ===== 首页 / 浏览 ===== */
+function renderHome(){
+  const user = getCurrentUser();
+  const videos = data.videos.filter(v => { const ch = getChannel(v.channelId); if (!ch) return false; if (!ch.enabled && (!user || ch.ownerId !== user.id)) return false; return true; }).sort((a,b) => b.createdAt - a.createdAt);
+  const content = $('content');
+  if (videos.length === 0){
+    content.innerHTML = `<div class="empty"><span class="ee">🎬</span><div class="et">${esc(t('home.noVideos'))}</div><div class="es">${esc(t('home.beFirst'))}</div>${user ? `<a class="eact" href="#/upload">${esc(t('home.uploadFirst'))}</a>` : `<a class="eact" href="#/register">${esc(t('home.registerToCreate'))}</a>`}</div>`;
+    return;
+  }
+  content.innerHTML = `<div class="page-title">${esc(t('home.recommend'))}</div><div class="grid">${videos.map(videoCard).join('')}</div>`;
+}
+
+function renderBrowse(){
+  const user = getCurrentUser();
+  const videos = data.videos.filter(v => { const ch = getChannel(v.channelId); if (!ch) return false; if (!ch.enabled && (!user || ch.ownerId !== user.id)) return false; return true; }).sort((a,b) => b.views - a.views);
+  $('content').innerHTML = `<div class="page-title">${esc(t('home.allVideos'))}</div>${videos.length === 0 ? `<div class="empty"><span class="ee">📭</span><div class="et">${esc(t('home.noVideosShort'))}</div></div>` : `<div class="grid">${videos.map(videoCard).join('')}</div>`}`;
+}
+
+/* ===== 播放页 ===== */
+async function renderWatch(videoId){
+  const v = getVideo(videoId);
+  const content = $('content');
+  if (!v){ return renderNotFound(); }
+
+  v.views = (v.views || 0) + 1;
+  saveData();
+
+  const ch = getChannel(v.channelId);
+  const owner = ch ? getUser(ch.ownerId) : null;
+  const user = getCurrentUser();
+  const liked = user ? (v.likes || []).includes(user.id) : false;
+  const disliked = user ? (v.dislikes || []).includes(user.id) : false;
+  const subscribed = user ? isSubscribed(user.id, v.channelId) : false;
+  const subCount = getSubscriberCount(v.channelId);
+  const chAv = owner && owner.avatar
+    ? `<div class="v-av" style="background-image:url('${esc(owner.avatar)}')"></div>`
+    : `<div class="v-av" style="background:${ch ? colorOf(ch.name) : '#ff0033'}">${ch ? esc(ch.name[0].toUpperCase()) : '?'}</div>`;
+
+  const related = data.videos.filter(x => x.id !== v.id && x.channelId === v.channelId).concat(data.videos.filter(x => x.id !== v.id && x.channelId !== v.channelId)).slice(0, 12);
+  const comments = (v.comments || []).slice().sort((a,b) => b.createdAt - a.createdAt);
+
+  content.innerHTML = `
+  <div class="watch">
+    <div>
+      <div class="player-wrap" id="playerWrap"><video id="player" controls preload="metadata" poster="${esc(v.thumbnail || '')}"></video></div>
+      <h1 class="watch-title">${esc(v.title)}</h1>
+      <div class="watch-bar">
+        <div class="watch-ch">${chAv}
+          <div class="watch-ch-info">
+            <div class="watch-ch-name" onclick="location.hash='#/channel/${v.channelId}'">${esc(ch ? ch.name : t('watch.unknownChannel'))}</div>
+            <div class="watch-ch-subs">${fmtViews(subCount)} ${esc(t('video.subscribers'))}</div>
+          </div>
+          ${user ? `<button class="btn-sub ${subscribed ? 'on' : ''}" id="subBtn">${subscribed ? esc(t('watch.subscribed')) : esc(t('watch.subscribe'))}</button>` : ''}
+        </div>
+        <div class="watch-actions">
+          <button class="act-btn ${liked ? 'on' : ''}" id="likeBtn">👍 ${fmtViews((v.likes || []).length)}</button>
+          <button class="act-btn ${disliked ? 'on' : ''}" id="dislikeBtn">👎</button>
+          <button class="act-btn" id="shareBtn">🔗 ${esc(t('watch.share'))}</button>
+        </div>
+      </div>
+      <div class="watch-desc">
+        <div class="wl">${fmtViews(v.views)} ${esc(t('watch.viewsAndTime'))}${fmtTime(v.createdAt)}</div>
+        <div class="wtext">${v.description ? esc(v.description) : esc(t('watch.noDesc'))}</div>
+      </div>
+      <div class="comments">
+        <div class="comments-title">${comments.length} ${esc(t('watch.comments'))}</div>
+        ${user ? `
+          <div class="cmt-form">
+            ${user.avatar ? `<div class="cmt-av" style="background-image:url('${esc(user.avatar)}')"></div>` : `<div class="cmt-av">${esc(user.username[0].toUpperCase())}</div>`}
+            <textarea class="cmt-input" id="cmtInput" placeholder="${esc(t('watch.writeComment'))}" rows="1"></textarea>
+            <button class="cmt-submit" id="cmtSubmit">${esc(t('watch.postComment'))}</button>
+          </div>` : `
+          <div class="cmt-form" style="align-items:center">
+            <div class="cmt-av">?</div>
+            <div style="flex:1;color:var(--dim);font-size:13.5px"><a href="#/login" style="color:var(--accent);font-weight:600">${esc(t('watch.loginAction'))}</a> ${esc(t('watch.loginToComment'))}</div>
+          </div>`}
+        <div id="commentsList">
+          ${comments.length === 0 ? `<div style="color:var(--dim);font-size:13.5px;padding:16px 0">${esc(t('watch.noComments'))}</div>`
+            : comments.map(c => {
+              const cu = getUser(c.userId);
+              const name = cu ? cu.username : t('watch.deletedUser');
+              const av = cu && cu.avatar ? `<div class="cmt-av" style="background-image:url('${esc(cu.avatar)}')"></div>` : `<div class="cmt-av" style="background:${colorOf(name)}">${esc(name[0].toUpperCase())}</div>`;
+              return `<div class="cmt">${av}<div class="cmt-body"><div class="cmt-head"><b>${esc(name)}</b><span>${fmtTime(c.createdAt)}</span></div><div class="cmt-text">${esc(c.text)}</div></div></div>`;
+            }).join('')}
+        </div>
+      </div>
+    </div>
+    <aside>
+      <div class="related-title">${esc(t('watch.related'))}</div>
+      ${related.map(r => {
+        const rc = getChannel(r.channelId);
+        return `<div class="rel-card" onclick="location.hash='#/watch/${r.id}'">
+          <div class="rel-thumb">${r.thumbnail ? `<img src="${esc(r.thumbnail)}" alt="">` : `<div class="fallback">🎬</div>`}<div class="v-duration">${fmtDuration(r.duration)}</div></div>
+          <div class="rel-info"><div class="rel-title">${esc(r.title)}</div><div class="rel-ch">${esc(rc ? rc.name : '')}</div><div class="rel-ch">${fmtViews(r.views)} ${esc(t('video.views'))}</div></div>
+        </div>`;
+      }).join('')}
+    </aside>
+  </div>`;
+
+  try {
+    const blob = await getBlob(v.id);
+    if (blob){
+      const url = URL.createObjectURL(blob);
+      window._activeBlobUrl = url;
+      const player = $('player');
+      if (player){
+        player.src = url;
+        player.volume = (data.settings && data.settings.defaultVolume != null) ? data.settings.defaultVolume : 1;
+        if (data.settings && data.settings.autoplay) player.play().catch(() => {});
+      }
+    } else {
+      const wrap = $('playerWrap');
+      wrap.innerHTML = `<div class="missing"><div>⚠️ ${esc(t('watch.videoMissing'))}<br><span style="font-size:12.5px;color:var(--dim-2);display:inline-block;margin-top:8px;max-width:80%">${esc(t('watch.videoMissingHint'))}</span></div></div>`;
+    }
+  } catch(e){
+    console.error('加载视频失败', e);
+    const wrap = $('playerWrap');
+    if (wrap) wrap.innerHTML = `<div class="missing"><div>⚠️ ${esc(t('watch.videoMissing'))}</div></div>`;
+  }
+
+  const subBtn = $('subBtn');
+  if (subBtn){
+    subBtn.addEventListener('click', () => {
+      const idx = data.subscriptions.findIndex(s => s.userId === user.id && s.channelId === v.channelId);
+      if (idx >= 0){ data.subscriptions.splice(idx, 1); subBtn.classList.remove('on'); subBtn.textContent = t('watch.subscribe'); toast(t('watch.unsubscribed')); }
+      else { data.subscriptions.push({ userId: user.id, channelId: v.channelId, createdAt: now() }); subBtn.classList.add('on'); subBtn.textContent = t('watch.subscribed'); toast(t('watch.subscribedToast')); }
+      saveData();
+      const subsEl = document.querySelector('.watch-ch-subs');
+      if (subsEl) subsEl.textContent = fmtViews(getSubscriberCount(v.channelId)) + ' ' + t('video.subscribers');
+    });
+  }
+  const likeBtn = $('likeBtn'), dislikeBtn = $('dislikeBtn');
+  if (likeBtn){
+    likeBtn.addEventListener('click', () => {
+      if (!user){ location.hash = '#/login'; return; }
+      v.likes = v.likes || []; v.dislikes = v.dislikes || [];
+      const li = v.likes.indexOf(user.id), di = v.dislikes.indexOf(user.id);
+      if (li >= 0) v.likes.splice(li, 1);
+      else { v.likes.push(user.id); if (di >= 0) v.dislikes.splice(di, 1); }
+      saveData(); likeBtn.classList.toggle('on'); likeBtn.innerHTML = '👍 ' + fmtViews(v.likes.length); dislikeBtn.classList.remove('on');
+    });
+  }
+  if (dislikeBtn){
+    dislikeBtn.addEventListener('click', () => {
+      if (!user){ location.hash = '#/login'; return; }
+      v.likes = v.likes || []; v.dislikes = v.dislikes || [];
+      const li = v.likes.indexOf(user.id), di = v.dislikes.indexOf(user.id);
+      if (di >= 0) v.dislikes.splice(di, 1);
+      else { v.dislikes.push(user.id); if (li >= 0) v.likes.splice(li, 1); }
+      saveData(); dislikeBtn.classList.toggle('on'); likeBtn.classList.remove('on'); likeBtn.innerHTML = '👍 ' + fmtViews(v.likes.length);
+    });
+  }
+  const shareBtn = $('shareBtn');
+  if (shareBtn){
+    shareBtn.addEventListener('click', () => {
+      const url = location.href;
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => toast(t('watch.linkCopiedToast'), 'success'));
+      else toast('Link: ' + url);
+    });
+  }
+  const cmtSubmit = $('cmtSubmit');
+  if (cmtSubmit){
+    cmtSubmit.addEventListener('click', () => {
+      const input = $('cmtInput');
+      const text = input.value.trim();
+      if (!text){ toast(t('watch.commentEmpty'), 'error'); return; }
+      v.comments = v.comments || [];
+      v.comments.push({ id: uid(), userId: user.id, text, createdAt: now() });
+      saveData(); input.value = ''; toast(t('watch.commentPosted'), 'success'); renderWatch(videoId);
+    });
+    $('cmtInput').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); cmtSubmit.click(); } });
+    const ta = $('cmtInput');
+    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'; });
+  }
+}
+
+/* ===== 频道页 ===== */
+function renderChannel(channelId){
+  const ch = getChannel(channelId);
+  const content = $('content');
+  if (!ch){ return renderNotFound(); }
+
+  const owner = getUser(ch.ownerId);
+  const user = getCurrentUser();
+  const isOwner = !!(user && user.id === ch.ownerId);
+  const subscribed = user ? isSubscribed(user.id, ch.id) : false;
+  const subCount = getSubscriberCount(ch.id);
+
+  let videos = data.videos.filter(v => v.channelId === ch.id);
+  if (!ch.enabled && !isOwner){
+    content.innerHTML = `<div class="empty"><span class="ee">🚫</span><div class="et">${esc(t('channel.stopped'))}</div><div class="es">${esc(t('channel.ownerStopped'))}</div></div>`;
+    return;
+  }
+  videos.sort((a,b) => b.createdAt - a.createdAt);
+  const av = owner && owner.avatar
+    ? `<div class="ch-av-lg" style="background-image:url('${esc(owner.avatar)}')"></div>`
+    : `<div class="ch-av-lg" style="background:${colorOf(ch.name)}">${esc(ch.name[0].toUpperCase())}</div>`;
+
+  content.innerHTML = `
+    <div class="ch-hero">
+      ${av}
+      <div class="ch-info">
+        <div class="ch-name">${esc(ch.name)}</div>
+        <div class="ch-stats">${fmtViews(subCount)} ${esc(t('video.subscribers'))} · ${videos.length} ${esc(t('video.videos'))}${!ch.enabled ? ` <span class="status off" style="margin-left:10px">${esc(t('channel.stoppedBadge'))}</span>` : ''}</div>
+        <div class="ch-desc">${ch.description ? esc(ch.description) : esc(t('channel.noDesc'))}</div>
+      </div>
+      <div class="ch-actions">
+        ${isOwner ? `<a class="btn btn-ghost" href="#/studio">⚙️ ${esc(t('channel.manage'))}</a>`
+          : user ? `<button class="btn btn-primary" id="chSubBtn">${subscribed ? esc(t('watch.subscribed')) : esc(t('watch.subscribe'))}</button>`
+          : `<a class="btn btn-primary" href="#/login">${esc(t('watch.subscribe'))}</a>`}
+      </div>
+    </div>
+    ${videos.length === 0
+      ? `<div class="empty"><span class="ee">🎬</span><div class="et">${isOwner ? esc(t('channel.youHaveNoVideos')) : esc(t('channel.channelHasNoVideos'))}</div>${isOwner ? `<a class="eact" href="#/upload">${esc(t('channel.uploadVideo'))}</a>` : ''}</div>`
+      : `<div class="grid">${videos.map(videoCard).join('')}</div>`}`;
+
+  const btn = $('chSubBtn');
+  if (btn && user){
+    btn.addEventListener('click', () => {
+      const idx = data.subscriptions.findIndex(s => s.userId === user.id && s.channelId === ch.id);
+      if (idx >= 0){ data.subscriptions.splice(idx, 1); btn.textContent = t('watch.subscribe'); toast(t('watch.unsubscribed')); }
+      else { data.subscriptions.push({ userId: user.id, channelId: ch.id, createdAt: now() }); btn.textContent = t('watch.subscribed'); toast(t('watch.subscribedToast')); }
+      saveData();
+    });
+  }
+}
+
+/* ===== 订阅页 ===== */
+function renderSubs(){
+  const user = getCurrentUser();
+  const content = $('content');
+  if (!user){ location.hash = '#/login'; return; }
+  const subs = data.subscriptions.filter(s => s.userId === user.id);
+  const channels = subs.map(s => getChannel(s.channelId)).filter(Boolean);
+  content.innerHTML = `
+    <div class="page-title">${esc(t('subs.title'))}</div>
+    ${channels.length === 0
+      ? `<div class="empty"><span class="ee">🎯</span><div class="et">${esc(t('subs.noSubs'))}</div><div class="es">${esc(t('subs.noSubsHint'))}</div><a class="eact" href="#/">${esc(t('subs.goBrowse'))}</a></div>`
+      : `<div class="grid">${channels.map(ch => {
+        const videos = data.videos.filter(v => v.channelId === ch.id && ch.enabled).sort((a,b) => b.createdAt - a.createdAt).slice(0, 6);
+        const owner = getUser(ch.ownerId);
+        const av = owner && owner.avatar ? `<div class="v-av" style="background-image:url('${esc(owner.avatar)}')"></div>` : `<div class="v-av" style="background:${colorOf(ch.name)}">${esc(ch.name[0].toUpperCase())}</div>`;
+        return `<div class="v-card" onclick="location.hash='#/channel/${ch.id}'">
+          <div class="v-thumb">${videos[0] && videos[0].thumbnail ? `<img src="${esc(videos[0].thumbnail)}" alt="">` : `<div class="fallback">📺</div>`}</div>
+          <div class="v-meta">${av}<div class="v-info"><div class="v-title">${esc(ch.name)}</div><div class="v-ch">${videos.length} ${esc(t('video.videos'))}</div><div class="v-stats">${fmtViews(getSubscriberCount(ch.id))} ${esc(t('video.subscribers'))}</div></div></div>
+        </div>`;
+      }).join('')}</div>`}`;
+}
+
+/* ===== 搜索 ===== */
+function renderSearch(q){
+  const user = getCurrentUser();
+  const content = $('content');
+  q = (q || '').trim();
+  if (!q){ content.innerHTML = `<div class="empty"><span class="ee">🔍</span><div class="et">${esc(t('search.enterKeyword'))}</div></div>`; return; }
+  const lower = q.toLowerCase();
+  const videos = data.videos.filter(v => {
+    const ch = getChannel(v.channelId);
+    if (!ch) return false;
+    if (!ch.enabled && (!user || ch.ownerId !== user.id)) return false;
+    return (v.title || '').toLowerCase().includes(lower) || (v.description || '').toLowerCase().includes(lower) || (ch.name || '').toLowerCase().includes(lower);
+  }).sort((a,b) => b.views - a.views);
+  content.innerHTML = `
+    <div class="page-title">${esc(t('search.resultPrefix'))}${esc(q)}${esc(t('search.resultMid'))}${videos.length}${esc(t('search.resultSuffix'))}</div>
+    ${videos.length === 0
+      ? `<div class="empty"><span class="ee">😕</span><div class="et">${esc(t('search.noResult'))}</div><div class="es">${esc(t('search.tryOther'))}</div></div>`
+      : `<div class="grid">${videos.map(videoCard).join('')}</div>`}`;
+}
+
+/* ===== 登录 / 注册 ===== */
+function renderLogin(){
+  $('content').innerHTML = `
+    <div class="form-page">
+      <div class="form-title">${esc(t('auth.welcomeBack'))}</div>
+      <div class="form-desc">${esc(t('auth.loginDesc'))}</div>
+      <div class="form-card">
+        <div class="field"><label>${esc(t('auth.username'))}</label><input type="text" id="loginUser" placeholder="${esc(t('auth.inputUsername'))}" autocomplete="off"></div>
+        <div class="field"><label>${esc(t('auth.password'))}</label><input type="password" id="loginPass" placeholder="${esc(t('auth.inputPassword'))}"></div>
+        <button class="btn btn-primary btn-block" id="loginSubmit">${esc(t('auth.loginBtn'))}</button>
+        <div class="form-switch">${esc(t('auth.noAccount'))}<a href="#/register">${esc(t('auth.registerNow'))}</a></div>
+      </div>
+    </div>`;
+  const submit = async () => {
+    const username = $('loginUser').value.trim();
+    const password = $('loginPass').value;
+    if (!username || !password){ toast(t('auth.fillAll'), 'error'); return; }
+    const user = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if (!user){ toast(t('auth.userNotFound'), 'error'); return; }
+    const h = await hashPassword(password, user.salt);
+    if (h !== user.passwordHash){ toast(t('auth.wrongPassword'), 'error'); return; }
+    data.currentUserId = user.id;
+    saveData(); renderTopRight(); renderSidebar();
+    toast(t('auth.loginSuccess'), 'success');
+    location.hash = '#/';
+  };
+  $('loginSubmit').addEventListener('click', submit);
+  $('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  $('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginPass').focus(); });
+}
+
+function renderRegister(){
+  $('content').innerHTML = `
+    <div class="form-page">
+      <div class="form-title">${esc(t('auth.createAccount'))}</div>
+      <div class="form-desc">${esc(t('auth.registerDesc'))}</div>
+      <div class="form-card">
+        <div class="field"><label>${esc(t('auth.username'))}</label><input type="text" id="regUser" placeholder="${esc(t('auth.usernameRange'))}" autocomplete="off" maxlength="20"><div class="hint">${esc(t('auth.usernameHint'))}</div></div>
+        <div class="field"><label>${esc(t('auth.password'))}</label><input type="password" id="regPass" placeholder="${esc(t('auth.passwordMin'))}"></div>
+        <div class="field"><label>${esc(t('auth.confirmPassword'))}</label><input type="password" id="regPass2" placeholder="${esc(t('auth.reenterPassword'))}"></div>
+        <div class="field"><label>${esc(t('auth.channelName'))}</label><input type="text" id="regChannel" placeholder="${esc(t('auth.channelNamePlaceholder'))}" maxlength="30"><div class="hint">${esc(t('auth.channelNameHint'))}</div></div>
+        <button class="btn btn-primary btn-block" id="regSubmit">${esc(t('auth.createBtn'))}</button>
+        <div class="form-switch">${esc(t('auth.hasAccount'))}<a href="#/login">${esc(t('auth.backToLogin'))}</a></div>
+      </div>
+    </div>`;
+  const submit = async () => {
+    const username = $('regUser').value.trim();
+    const password = $('regPass').value;
+    const password2 = $('regPass2').value;
+    const channelName = $('regChannel').value.trim();
+    if (!username || username.length < 2){ toast(t('auth.usernameTooShort'), 'error'); return; }
+    if (!/^[\w\u4e00-\u9fa5]+$/.test(username)){ toast(t('auth.usernameInvalid'), 'error'); return; }
+    if (!password || password.length < 4){ toast(t('auth.passwordTooShort'), 'error'); return; }
+    if (password !== password2){ toast(t('auth.passwordMismatch'), 'error'); return; }
+    if (!channelName){ toast(t('auth.fillChannelName'), 'error'); return; }
+    if (data.users.some(u => u.username.toLowerCase() === username.toLowerCase())){ toast(t('auth.usernameTaken'), 'error'); return; }
+    const salt = uid();
+    const passwordHash = await hashPassword(password, salt);
+    const userId = uid(); const channelId = uid();
+    data.users.push({ id: userId, username, salt, passwordHash, avatar: null, createdAt: now() });
+    data.channels.push({ id: channelId, ownerId: userId, name: channelName, description: '', avatar: null, enabled: true, createdAt: now() });
+    data.currentUserId = userId;
+    saveData(); renderTopRight(); renderSidebar();
+    toast(t('auth.registerSuccess'), 'success');
+    location.hash = '#/';
+  };
+  $('regSubmit').addEventListener('click', submit);
+  ['regUser','regPass','regPass2','regChannel'].forEach(id => { $(id).addEventListener('keydown', e => { if (e.key === 'Enter') submit(); }); });
+}
+
+/* ===== 上传 ===== */
+function renderUpload(){
+  const user = getCurrentUser();
+  const content = $('content');
+  if (!user){ content.innerHTML = `<div class="empty"><span class="ee">🔒</span><div class="et">${esc(t('upload.needLogin'))}</div><a class="eact" href="#/login">${esc(t('upload.goLogin'))}</a></div>`; return; }
+  const channel = getChannelByOwner(user.id);
+  if (!channel){ content.innerHTML = `<div class="empty"><span class="ee">😕</span><div class="et">${esc(t('upload.noChannel'))}</div></div>`; return; }
+
+  content.innerHTML = `
+    <div class="form-page">
+      <div class="form-title">${esc(t('upload.title'))}</div>
+      <div class="form-desc">${esc(t('upload.publishTo'))}${esc(channel.name)}${esc(t('upload.publishToEnd'))}</div>
+      <div class="form-card">
+        <div class="field"><label>${esc(t('upload.videoTitle'))} *</label><input type="text" id="upTitle" placeholder="${esc(t('upload.videoTitlePlaceholder'))}" maxlength="120"></div>
+        <div class="field"><label>${esc(t('upload.videoDesc'))}</label><textarea id="upDesc" placeholder="${esc(t('upload.videoDescPlaceholder'))}" maxlength="5000"></textarea></div>
+        <div class="field"><label>${esc(t('upload.videoFile'))} *</label>
+          <div class="file-drop" id="videoDrop"><span class="fd-icon">🎬</span><div class="fd-text">${esc(t('upload.clickSelectVideo'))}</div><div class="fd-hint">${esc(t('upload.dropOrDrag'))}</div></div>
+          <input type="file" id="videoInput" accept="video/*" hidden>
+        </div>
+        <div class="field"><label>${esc(t('upload.coverOptional'))}</label>
+          <div class="file-drop" id="thumbDrop"><span class="fd-icon">🖼️</span><div class="fd-text">${esc(t('upload.clickSelectCover'))}</div><div class="fd-hint">${esc(t('upload.autoThumbnail'))}</div></div>
+          <input type="file" id="thumbInput" accept="image/*" hidden>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="location.hash='#/'">${esc(t('upload.cancel'))}</button>
+          <button class="btn btn-primary" id="upSubmit">${esc(t('upload.publish'))}</button>
+        </div>
+      </div>
+    </div>`;
+
+  let videoFile = null, thumbDataUrl = null;
+  const videoDrop = $('videoDrop'), videoInput = $('videoInput');
+  videoDrop.addEventListener('click', () => videoInput.click());
+  videoInput.addEventListener('change', e => { if (e.target.files[0]) handleVideoFile(e.target.files[0]); });
+  videoDrop.addEventListener('dragover', e => { e.preventDefault(); videoDrop.classList.add('dragover'); });
+  videoDrop.addEventListener('dragleave', () => videoDrop.classList.remove('dragover'));
+  videoDrop.addEventListener('drop', e => { e.preventDefault(); videoDrop.classList.remove('dragover'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('video/')) handleVideoFile(f); else toast(t('upload.dropVideoOnly'), 'error'); });
+  function handleVideoFile(f){
+    videoFile = f;
+    videoDrop.classList.add('has-file');
+    videoDrop.innerHTML = `<span class="fd-icon">✅</span><div class="fd-text">${esc(f.name)}</div><div class="fd-hint">${fmtSize(f.size)}</div>`;
+  }
+  const thumbDrop = $('thumbDrop'), thumbInput = $('thumbInput');
+  thumbDrop.addEventListener('click', () => thumbInput.click());
+  thumbInput.addEventListener('change', e => { if (e.target.files[0]) handleThumbFile(e.target.files[0]); });
+  thumbDrop.addEventListener('dragover', e => { e.preventDefault(); thumbDrop.classList.add('dragover'); });
+  thumbDrop.addEventListener('dragleave', () => thumbDrop.classList.remove('dragover'));
+  thumbDrop.addEventListener('drop', e => { e.preventDefault(); thumbDrop.classList.remove('dragover'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) handleThumbFile(f); else toast(t('upload.dropImageOnly'), 'error'); });
+  function handleThumbFile(f){
+    const reader = new FileReader();
+    reader.onload = () => {
+      thumbDataUrl = reader.result;
+      thumbDrop.classList.add('has-file');
+      thumbDrop.innerHTML = `<span class="fd-icon">✅</span><div class="fd-text">${esc(f.name)}</div><div class="fd-hint">${fmtSize(f.size)}</div>`;
+    };
+    reader.readAsDataURL(f);
+  }
+  $('upSubmit').addEventListener('click', async () => {
+    const title = $('upTitle').value.trim();
+    const desc = $('upDesc').value.trim();
+    if (!title){ toast(t('upload.fillTitle'), 'error'); return; }
+    if (!videoFile){ toast(t('upload.selectVideo'), 'error'); return; }
+    const btn = $('upSubmit');
+    btn.disabled = true; btn.textContent = t('upload.processing');
+    try {
+      const videoInfo = await analyzeVideo(videoFile);
+      let thumbnail = thumbDataUrl;
+      if (!thumbnail && videoInfo.thumbnail) thumbnail = videoInfo.thumbnail;
+      const videoId = uid();
+      await putBlob(videoId, videoFile);
+      data.videos.push({
+        id: videoId, title, description: desc, channelId: channel.id,
+        duration: videoInfo.duration || 0, thumbnail: thumbnail || null,
+        views: 0, likes: [], dislikes: [], comments: [],
+        size: videoFile.size, mime: videoFile.type, createdAt: now()
+      });
+      saveData();
+      toast(t('upload.publishSuccess'), 'success');
+      location.hash = '#/watch/' + videoId;
+    } catch(e){
+      console.error(e);
+      toast(t('upload.uploadFailed') + e.message, 'error');
+      btn.disabled = false; btn.textContent = t('upload.publish');
+    }
+  });
+}
+
+function analyzeVideo(file){
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.preload = 'metadata'; video.muted = true; video.playsInline = true; video.src = url;
+    let resolved = false;
+    const done = (result) => { if (resolved) return; resolved = true; URL.revokeObjectURL(url); resolve(result); };
+    const timeout = setTimeout(() => done({ duration: 0, thumbnail: null }), 8000);
+    video.onloadedmetadata = () => { video.currentTime = Math.min(1, video.duration / 3); };
+    video.onseeked = () => {
+      clearTimeout(timeout);
+      try {
+        const canvas = document.createElement('canvas');
+        const w = 480, h = Math.round(w * video.videoHeight / video.videoWidth) || 270;
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, w, h);
+        done({ duration: video.duration, thumbnail: canvas.toDataURL('image/jpeg', 0.75) });
+      } catch(e){ done({ duration: video.duration, thumbnail: null }); }
+    };
+    video.onerror = () => { clearTimeout(timeout); done({ duration: 0, thumbnail: null }); };
+  });
+}
+
+/* ===== 工作室 ===== */
+let studioTab = 'channel';
+
+function renderStudio(){
+  const user = getCurrentUser();
+  const content = $('content');
+  if (!user){ content.innerHTML = `<div class="empty"><span class="ee">🔒</span><div class="et">${esc(t('upload.needLogin'))}</div><a class="eact" href="#/login">${esc(t('upload.goLogin'))}</a></div>`; return; }
+  const channel = getChannelByOwner(user.id);
+  if (!channel){ content.innerHTML = `<div class="empty"><span class="ee">😕</span><div class="et">${esc(t('upload.noChannel'))}</div></div>`; return; }
+
+  const myVideos = data.videos.filter(v => v.channelId === channel.id).sort((a,b) => b.createdAt - a.createdAt);
+  const avHTML = user.avatar
+    ? `<div class="avatar-preview" id="avPreview" style="background-image:url('${esc(user.avatar)}')"></div>`
+    : `<div class="avatar-preview" id="avPreview">${esc(user.username[0].toUpperCase())}</div>`;
+
+  content.innerHTML = `
+    <div class="page-title">${esc(t('studio.title'))}</div>
+    <div class="studio-tabs">
+      <div class="studio-tab ${studioTab==='channel'?'active':''}" data-tab="channel">${esc(t('studio.channelSettings'))}</div>
+      <div class="studio-tab ${studioTab==='videos'?'active':''}" data-tab="videos">${esc(t('studio.myVideos'))} (${myVideos.length})</div>
+      <div class="studio-tab ${studioTab==='account'?'active':''}" data-tab="account">${esc(t('studio.accountSettings'))}</div>
+    </div>
+
+    <div class="studio-panel ${studioTab==='channel'?'active':''}" id="panel-channel">
+      <div class="form-card">
+        <div class="field"><label>${esc(t('studio.channelIcon'))}</label>
+          <div class="avatar-upload">
+            ${avHTML.replace('avPreview', 'chAvPreview').replace(user.username[0].toUpperCase(), esc(channel.name[0].toUpperCase()))}
+            <div>
+              <button class="btn btn-ghost" id="chAvBtn">${esc(t('studio.changeIcon'))}</button>
+              <input type="file" id="chAvInput" accept="image/*" hidden>
+              <div class="hint" style="margin-top:8px">${esc(t('studio.squareHint'))}</div>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>${esc(t('studio.channelName'))}</label><input type="text" id="chName" value="${esc(channel.name)}" maxlength="30"></div>
+        <div class="field"><label>${esc(t('studio.channelDesc'))}</label><textarea id="chDesc" placeholder="${esc(t('studio.channelDescPlaceholder'))}" maxlength="1000">${esc(channel.description || '')}</textarea></div>
+        <div class="field"><label>${esc(t('studio.channelStatus'))}</label>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <button class="btn ${channel.enabled ? 'btn-primary' : 'btn-ghost'}" id="chToggle">${channel.enabled ? '🟢 ' + esc(t('studio.enabled')) : '🔴 ' + esc(t('studio.disabled'))}</button>
+            <span class="hint" style="margin-top:0">${channel.enabled ? esc(t('studio.allCanSee')) : esc(t('studio.onlyYouSee'))}</span>
+          </div>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" id="chSave">${esc(t('studio.saveChanges'))}</button></div>
+      </div>
+    </div>
+
+    <div class="studio-panel ${studioTab==='videos'?'active':''}" id="panel-videos">
+      ${myVideos.length === 0
+        ? `<div class="empty"><span class="ee">🎬</span><div class="et">${esc(t('studio.noVideos'))}</div><a class="eact" href="#/upload">${esc(t('studio.uploadFirst'))}</a></div>`
+        : `<div class="my-videos-list">${myVideos.map(v => `
+            <div class="my-video">
+              <div class="my-video-thumb">${v.thumbnail ? `<img src="${esc(v.thumbnail)}" alt="">` : `<div class="fallback">🎬</div>`}</div>
+              <div class="my-video-info">
+                <div class="my-video-title">${esc(v.title)}</div>
+                <div class="my-video-stats">${fmtViews(v.views)} ${esc(t('video.views'))} · ${fmtTime(v.createdAt)} · ${fmtDuration(v.duration)}</div>
+              </div>
+              <div class="my-video-actions">
+                <button class="mini-btn" data-view="${v.id}">${esc(t('studio.view'))}</button>
+                <button class="mini-btn danger" data-del="${v.id}">${esc(t('studio.delete'))}</button>
+              </div>
+            </div>`).join('')}</div>`}
+    </div>
+
+    <div class="studio-panel ${studioTab==='account'?'active':''}" id="panel-account">
+      <div class="form-card">
+        <div class="field"><label>${esc(t('studio.username'))}</label><input type="text" value="${esc(user.username)}" disabled><div class="hint">${esc(t('studio.usernameCannotChange'))}</div></div>
+        <div class="field"><label>${esc(t('studio.avatar'))}</label>
+          <div class="avatar-upload">${avHTML}
+            <div>
+              <button class="btn btn-ghost" id="userAvBtn">${esc(t('studio.changeAvatar'))}</button>
+              <input type="file" id="userAvInput" accept="image/*" hidden>
+              ${user.avatar ? `<button class="btn btn-ghost" id="userAvClear" style="margin-top:6px">${esc(t('studio.removeAvatar'))}</button>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>${esc(t('studio.dataBackup'))}</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-ghost" id="exportBtn">📤 ${esc(t('studio.exportMeta'))}</button>
+            <button class="btn btn-ghost" id="importBtn">📥 ${esc(t('studio.importBackup'))}</button>
+          </div>
+        </div>
+        <div class="field" style="border-top:1px solid var(--border);padding-top:22px;margin-top:16px">
+          <label style="color:#ff5c5c">${esc(t('studio.dangerZone'))}</label>
+          <button class="btn" id="deleteAccountBtn" style="background:rgba(255,0,51,.12);color:#ff5c5c;border:1px solid rgba(255,0,51,.35);width:100%;justify-content:center">🗑️ ${esc(t('studio.deleteAccount'))}</button>
+          <div class="hint" style="margin-top:10px;color:#ff8a8a">${esc(t('studio.deleteAccountHint'))}${myVideos.length}${esc(t('studio.deleteAccountHintMid'))}</div>
+        </div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll('.studio-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      studioTab = tab.dataset.tab;
+      document.querySelectorAll('.studio-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === studioTab));
+      document.querySelectorAll('.studio-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + studioTab));
+    });
+  });
+
+  const chAvInput = $('chAvInput');
+  $('chAvBtn').addEventListener('click', () => chAvInput.click());
+  chAvInput.addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { user.avatar = r.result; saveData(); toast(t('studio.iconUpdated'), 'success'); renderStudio(); renderTopRight(); renderSidebar(); };
+    r.readAsDataURL(f);
+  });
+  const userAvInput = $('userAvInput');
+  $('userAvBtn').addEventListener('click', () => userAvInput.click());
+  userAvInput.addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { user.avatar = r.result; saveData(); toast(t('studio.avatarUpdated'), 'success'); renderStudio(); renderTopRight(); renderSidebar(); };
+    r.readAsDataURL(f);
+  });
+  const clearAv = $('userAvClear');
+  if (clearAv){ clearAv.addEventListener('click', () => { user.avatar = null; saveData(); toast(t('studio.avatarRemoved')); renderStudio(); renderTopRight(); renderSidebar(); }); }
+
+  $('chSave').addEventListener('click', () => {
+    const name = $('chName').value.trim();
+    const desc = $('chDesc').value.trim();
+    if (!name){ toast(t('studio.channelNameEmpty'), 'error'); return; }
+    channel.name = name; channel.description = desc;
+    saveData(); toast(t('studio.channelUpdated'), 'success'); renderSidebar();
+  });
+  $('chToggle').addEventListener('click', () => {
+    channel.enabled = !channel.enabled;
+    saveData(); toast(channel.enabled ? t('studio.channelEnabled') : t('studio.channelDisabled'));
+    renderStudio(); renderSidebar();
+  });
+
+  document.querySelectorAll('[data-view]').forEach(b => { b.addEventListener('click', () => { location.hash = '#/watch/' + b.dataset.view; }); });
+  document.querySelectorAll('[data-del]').forEach(b => {
+    b.addEventListener('click', async () => {
+      const vid = b.dataset.del;
+      const v = getVideo(vid);
+      if (!v) return;
+      if (!confirm(t('studio.deleteVideoConfirm') + v.title + t('studio.deleteVideoConfirmEnd'))) return;
+      try { await deleteBlob(vid); } catch(e){}
+      data.videos = data.videos.filter(x => x.id !== vid);
+      saveData(); toast(t('studio.videoDeleted')); renderStudio(); renderSidebar();
+    });
+  });
+
+  $('exportBtn').addEventListener('click', exportData);
+  $('importBtn').addEventListener('click', importData);
+  $('deleteAccountBtn').addEventListener('click', deleteCurrentAccount);
+}
+
+/* ===== 设置 ===== */
+function renderSettings(){
+  const content = $('content');
+  content.innerHTML = `
+    <div class="settings-page">
+      <div class="settings-hero"><div class="settings-hero-icon">🔧</div><div><h1>${esc(t('settings.title'))}</h1><p>${esc(t('settings.desc'))}</p></div></div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">🎨</div><div><div class="settings-group-title">${esc(t('settings.appearance'))}</div><div class="settings-group-desc">${esc(t('settings.appearanceDesc'))}</div></div></div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.theme'))}</div><div class="setting-row-desc">${esc(t('settings.themeDesc'))}</div></div>
+          <div class="setting-row-control">
+            <div class="segmented" id="themeSegment">
+              <button data-theme-val="dark" class="${data.theme==='dark'?'on':''}">🌙 ${esc(t('settings.themeDark'))}</button>
+              <button data-theme-val="light" class="${data.theme==='light'?'on':''}">☀️ ${esc(t('settings.themeLight'))}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">🌐</div><div><div class="settings-group-title">${esc(t('settings.language'))}</div><div class="settings-group-desc">${esc(t('settings.languageDesc'))}</div></div></div>
+        <div class="lang-options">
+          <div class="lang-option ${data.lang==='zh'?'on':''}" data-lang-val="zh"><div class="lang-option-flag">🇨🇳</div><div class="lang-option-info"><div class="lang-option-name">${esc(t('settings.langZh'))}</div><div class="lang-option-sub">${esc(t('settings.langZhSub'))}</div></div><div class="lang-option-check">✓</div></div>
+          <div class="lang-option ${data.lang==='en'?'on':''}" data-lang-val="en"><div class="lang-option-flag">🇺🇸</div><div class="lang-option-info"><div class="lang-option-name">${esc(t('settings.langEn'))}</div><div class="lang-option-sub">${esc(t('settings.langEnSub'))}</div></div><div class="lang-option-check">✓</div></div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">▶️</div><div><div class="settings-group-title">${esc(t('settings.playback'))}</div><div class="settings-group-desc">${esc(t('settings.playbackDesc'))}</div></div></div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.autoplay'))}</div><div class="setting-row-desc">${esc(t('settings.autoplayDesc'))}</div></div>
+          <div class="setting-row-control"><div class="switch ${data.settings.autoplay ? 'on' : ''}" id="autoplaySwitch"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.defaultVolume'))}</div><div class="setting-row-desc">${esc(t('settings.defaultVolumeDesc'))}</div></div>
+          <div class="setting-row-control" style="width:220px">
+            <div class="slider-row">
+              <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="${data.settings.defaultVolume}">
+              <span class="slider-value" id="volumeValue">${Math.round(data.settings.defaultVolume*100)}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">💾</div><div><div class="settings-group-title">${esc(t('settings.dataMgmt'))}</div><div class="settings-group-desc">${esc(t('settings.dataMgmtDesc'))}</div></div></div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.clearCache'))}</div><div class="setting-row-desc">${esc(t('settings.clearCacheDesc'))}</div></div>
+          <div class="setting-row-control"><button class="btn btn-ghost" id="clearCacheBtn" style="padding:9px 20px;font-size:13px">${esc(t('settings.clearCacheBtn'))}</button></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.exportAll'))}</div><div class="setting-row-desc">${esc(t('settings.exportAllDesc'))}</div></div>
+          <div class="setting-row-control"><button class="btn btn-ghost" id="setExportBtn" style="padding:9px 20px;font-size:13px">${esc(t('settings.exportBtn'))}</button></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.importAll'))}</div><div class="setting-row-desc">${esc(t('settings.importAllDesc'))}</div></div>
+          <div class="setting-row-control"><button class="btn btn-ghost" id="setImportBtn" style="padding:9px 20px;font-size:13px">${esc(t('settings.importBtn'))}</button></div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">🏢</div><div><div class="settings-group-title">${esc(t('settings.team'))}</div><div class="settings-group-desc">${esc(t('settings.teamDesc'))}</div></div></div>
+
+        <div class="team-card">
+          <div class="team-badge eiqey">Ei</div>
+          <div class="team-info">
+            <div class="team-name">${esc(t('settings.teamPublisherValue'))}</div>
+            <div class="team-role">${esc(t('settings.teamPublisherRole'))}</div>
+          </div>
+          <span class="status on" style="flex:0 0 auto">${esc(t('settings.teamPublisher'))}</span>
+        </div>
+
+        <div class="team-card">
+          <div class="team-badge ds">DS</div>
+          <div class="team-info">
+            <div class="team-name">DeepSeek</div>
+            <div class="team-role">${data.lang === 'en' ? 'AI co-development' : 'AI 协作开发'}</div>
+          </div>
+          <span class="status" style="flex:0 0 auto;background:rgba(0,145,255,.15);color:#0091ff">${esc(t('settings.teamMembers'))}</span>
+        </div>
+
+        <div class="team-card">
+          <div class="team-badge rk">RT</div>
+          <div class="team-info">
+            <div class="team-name">Reki-Ttemano</div>
+            <div class="team-role">${data.lang === 'en' ? 'Project initiation and maintenance' : '项目发起与维护'}</div>
+          </div>
+          <span class="status" style="flex:0 0 auto;background:rgba(255,107,157,.15);color:#ff6b9d">${esc(t('settings.teamMembers'))}</span>
+        </div>
+
+        <div class="team-copy">
+          ${esc(t('settings.copyrightValue'))}
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-head"><div class="settings-group-icon">ℹ️</div><div><div class="settings-group-title">${esc(t('settings.about'))}</div><div class="settings-group-desc">${esc(t('settings.aboutDesc'))}</div></div></div>
+        <div class="setting-row"><div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.version'))}</div></div><div class="setting-row-control"><span class="status on">v${esc(t('settings.versionVal'))}</span></div></div>
+        <div class="setting-row"><div class="setting-row-info"><div class="setting-row-title">${esc(t('settings.storageUsage'))}</div></div><div class="setting-row-control"><span style="font-family:ui-monospace,monospace;font-size:13px;color:var(--dim)">${fmtSize(new Blob([localStorage.getItem(LS_KEY) || '']).size)}</span></div></div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll('#themeSegment button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.dataset.themeVal;
+      if (val === data.theme) return;
+      data.theme = val; saveData(); applyTheme(); renderSettings(); toast(t('settings.themeChanged'));
+    });
+  });
+  document.querySelectorAll('[data-lang-val]').forEach(el => {
+    el.addEventListener('click', () => {
+      const val = el.dataset.langVal;
+      if (val === data.lang) return;
+      data.lang = val; saveData();
+      document.documentElement.lang = val === 'zh' ? 'zh-CN' : 'en';
+      toast(t('settings.langChanged'));
+      renderTopRight(); renderSidebar(); renderSettings();
+      $('searchInput').placeholder = t('searchPlaceholder');
+      setPageTitle();
+    });
+  });
+  const sw = $('autoplaySwitch');
+  if (sw){ sw.addEventListener('click', () => { data.settings.autoplay = !data.settings.autoplay; sw.classList.toggle('on', data.settings.autoplay); saveData(); toast(t('settings.savedToast'), 'success'); }); }
+  const volSlider = $('volumeSlider');
+  if (volSlider){
+    volSlider.addEventListener('input', () => { data.settings.defaultVolume = parseFloat(volSlider.value); $('volumeValue').textContent = Math.round(data.settings.defaultVolume * 100) + '%'; });
+    volSlider.addEventListener('change', () => { saveData(); toast(t('settings.savedToast'), 'success'); });
+  }
+  $('clearCacheBtn').addEventListener('click', () => {
+    if (!confirm(t('settings.clearCacheDesc') + '\n\n' + t('settings.clearCacheBtn') + '?')) return;
+    try { sessionStorage.clear(); } catch(e){}
+    if (window._activeBlobUrl){ try { URL.revokeObjectURL(window._activeBlobUrl); } catch(e){} window._activeBlobUrl = null; }
+    toast(t('settings.cacheCleared'), 'success');
+  });
+  $('setExportBtn').addEventListener('click', exportData);
+  $('setImportBtn').addEventListener('click', importData);
+}
+
+/* ===== 导出/导入 ===== */
+async function exportData(){
+  const meta = { version: 2, exportedAt: now(), users: data.users, channels: data.channels, videos: data.videos.map(v => ({ ...v })), subscriptions: data.subscriptions };
+  const blob = new Blob([JSON.stringify(meta, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  a.href = url;
+  a.download = `ofiebytebox-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast(t('toast.exportDone'), 'success');
+}
+
+function importData(){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const text = await f.text();
+      const meta = JSON.parse(text);
+      if (!meta.users || !meta.channels || !meta.videos) throw new Error(t('toast.importFormatError'));
+      if (!confirm(t('toast.importConfirm') + meta.videos.length + t('toast.importConfirmMid') + meta.users.length + t('toast.importConfirmMid2'))) return;
+      data.users = meta.users; data.channels = meta.channels; data.videos = meta.videos;
+      data.subscriptions = meta.subscriptions || [];
+      data.currentUserId = null;
+      saveData(); toast(t('toast.importSuccess'), 'success');
+      location.hash = '#/'; location.reload();
+    } catch(err){ toast(t('toast.importFailed') + err.message, 'error'); }
+  };
+  input.click();
+}
+
+/* ===== 404 ===== */
+function renderNotFound(){
+  $('content').innerHTML = `<div class="empty"><span class="ee">🚫</span><div class="et">${esc(t('titles.notFound'))}</div><a class="eact" href="#/">←</a></div>`;
+}
+
+/* ===== 账号删除 ===== */
+async function deleteCurrentAccount(){
+  const user = getCurrentUser();
+  if (!user) return;
+  const myChannel = getChannelByOwner(user.id);
+  const myVideos = myChannel ? data.videos.filter(v => v.channelId === myChannel.id) : [];
+  const myCommentCount = data.videos.reduce((s, v) => s + ((v.comments || []).filter(c => c.userId === user.id).length), 0);
+  const firstConfirm = confirm(
+    `⚠️ ${t('deleteAcc.title')}\n\n${t('deleteAcc.aboutTo')}${user.username}${t('deleteAcc.aboutToEnd')}\n\n` +
+    `${t('deleteAcc.bulletAccount')}\n${t('deleteAcc.bulletChannel')}${myChannel ? myChannel.name : t('deleteAcc.bulletNoChannel')}${t('deleteAcc.bulletChannelEnd')}\n` +
+    `${t('deleteAcc.bulletVideos1')}${myVideos.length}${t('deleteAcc.bulletVideos2')}\n${t('deleteAcc.bulletComments1')}${myCommentCount}${t('deleteAcc.bulletComments2')}\n` +
+    `${t('deleteAcc.bulletOthers')}\n\n${t('deleteAcc.cannotUndo')}`
+  );
+  if (!firstConfirm) return;
+  const answer = prompt(t('deleteAcc.confirmPrompt'));
+  if (answer === null){ toast(t('deleteAcc.cancelled')); return; }
+  const confirmText = data.lang === 'en' ? 'I understand and confirm deleting my account' : '我已了解并确认删除我的账号';
+  if (answer.trim() !== confirmText){ toast(t('deleteAcc.textMismatch'), 'error'); return; }
+  try {
+    let deletedBlobs = 0;
+    for (const v of myVideos){ try { await deleteBlob(v.id); deletedBlobs++; } catch(e){} }
+    if (myChannel) data.videos = data.videos.filter(v => v.channelId !== myChannel.id);
+    data.channels = data.channels.filter(c => c.ownerId !== user.id);
+    data.subscriptions = data.subscriptions.filter(s => s.userId !== user.id);
+    data.videos.forEach(v => {
+      if (Array.isArray(v.comments)) v.comments = v.comments.filter(c => c.userId !== user.id);
+      if (Array.isArray(v.likes)) v.likes = v.likes.filter(id => id !== user.id);
+      if (Array.isArray(v.dislikes)) v.dislikes = v.dislikes.filter(id => id !== user.id);
+    });
+    data.users = data.users.filter(u => u.id !== user.id);
+    data.currentUserId = null;
+    saveData(); toast(t('deleteAcc.deleted1') + deletedBlobs + t('deleteAcc.deleted2'), 'success');
+    renderTopRight(); renderSidebar();
+    location.hash = '#/'; route();
+  } catch(e){ console.error(e); toast(t('deleteAcc.failed') + e.message, 'error'); }
+}
+
+/* ===== 服务器设置 ===== */
+let adminLogs = [];
+function adminLog(msg, type){
+  const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+  adminLogs.unshift({ time, msg, type: type || 'info' });
+  if (adminLogs.length > 50) adminLogs.pop();
+  const el = $('adminLogBox');
+  if (el) el.innerHTML = adminLogs.map(l => `<div class="log-${l.type}">[${l.time}] ${esc(l.msg)}</div>`).join('');
+}
+
+async function renderAdmin(){
+  const content = $('content');
+  document.body.classList.remove('sidebar-open');
+  const userCount = data.users.length;
+  const channelCount = data.channels.length;
+  const videoCount = data.videos.length;
+  const commentCount = data.videos.reduce((s, v) => s + ((v.comments || []).length), 0);
+  const likeCount = data.videos.reduce((s, v) => s + ((v.likes || []).length), 0);
+  const subCount = data.subscriptions.length;
+  const totalViews = data.videos.reduce((s, v) => s + (v.views || 0), 0);
+  const lsRaw = localStorage.getItem(LS_KEY) || '';
+  const lsSize = new Blob([lsRaw]).size;
+  let totalBlobSize = 0, blobCount = 0;
+  try {
+    const db = await ensureIDB();
+    const tx = db.transaction('blobs', 'readonly');
+    const req = tx.objectStore('blobs').openCursor();
+    await new Promise((res) => {
+      req.onsuccess = e => {
+        const cursor = e.target.result;
+        if (cursor){ totalBlobSize += (cursor.value && cursor.value.size) || 0; blobCount++; cursor.continue(); }
+        else res();
+      };
+      req.onerror = () => res();
+    });
+  } catch(e){ console.warn('读取 blob 统计失败', e); }
+
+  let quota = null;
+  try { if (navigator.storage && navigator.storage.estimate) quota = await navigator.storage.estimate(); } catch(e){}
+
+  content.innerHTML = `
+    <div class="admin-wrap">
+      <div class="admin-hero">
+        <div class="admin-hero-inner">
+          <div class="admin-hero-icon">🖥️</div>
+          <div class="admin-hero-text">
+            <h1>${data.lang === 'en' ? 'Server Settings' : '服务器设置'}</h1>
+            <p>${data.lang === 'en' ? BRAND + ' system admin panel · All operations act on local browser storage' : BRAND + ' 系统管理面板 · 所有操作直接作用于本机浏览器存储'}</p>
+          </div>
+          <span class="admin-hero-badge">ADMIN</span>
+        </div>
+      </div>
+
+      <div class="admin-stats">
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Users' : '用户'}</div><div class="admin-stat-value">${userCount}</div><div class="admin-stat-sub">${data.lang === 'en' ? 'registered' : '已注册账号'}</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Channels' : '频道'}</div><div class="admin-stat-value">${channelCount}</div><div class="admin-stat-sub">${data.channels.filter(c=>c.enabled).length} ${data.lang === 'en' ? 'enabled' : '个已启用'}</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Videos' : '视频'}</div><div class="admin-stat-value">${videoCount}</div><div class="admin-stat-sub">${fmtViews(totalViews)} ${data.lang === 'en' ? 'total views' : '次总观看'}</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Comments' : '评论'}</div><div class="admin-stat-value">${commentCount}</div><div class="admin-stat-sub">${likeCount} ${data.lang === 'en' ? 'likes' : '个点赞'}</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Subscriptions' : '订阅'}</div><div class="admin-stat-value">${subCount}</div><div class="admin-stat-sub">${data.lang === 'en' ? 'relations' : '订阅关系'}</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">${data.lang === 'en' ? 'Storage' : '存储占用'}</div><div class="admin-stat-value">${fmtSize(lsSize + totalBlobSize)}</div><div class="admin-stat-sub">${fmtSize(lsSize)} · ${fmtSize(totalBlobSize)}</div></div>
+      </div>
+
+      ${quota && quota.quota ? `
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">💾</div><div><div class="admin-section-title">${data.lang === 'en' ? 'Storage Quota' : '存储配额'}</div></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <span>${fmtSize(quota.usage || 0)} / ${fmtSize(quota.quota || 0)}</span>
+          <span>${(((quota.usage || 0) / (quota.quota || 1)) * 100).toFixed(1)}%</span>
+        </div>
+        <div style="height:8px;background:var(--surface-3);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${Math.min(100, ((quota.usage || 0) / (quota.quota || 1)) * 100)}%;background:linear-gradient(90deg,#ff0033,#ff7a00);border-radius:4px"></div>
+        </div>
+      </div>` : ''}
+
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">⚡</div><div><div class="admin-section-title">${data.lang === 'en' ? 'System Operations' : '系统操作'}</div></div></div>
+        <div class="admin-row">
+          <div class="admin-row-av" style="background:linear-gradient(135deg,#0091ff,#0066cc)">📤</div>
+          <div class="admin-row-info"><div class="admin-row-name">${data.lang === 'en' ? 'Export all data' : '导出全部数据'}</div><div class="admin-row-sub">${data.lang === 'en' ? 'Generate JSON backup (without videos)' : '生成元数据 JSON 备份文件（不含视频）'}</div></div>
+          <div class="admin-row-actions"><button class="admin-btn" id="adminExportBtn">${data.lang === 'en' ? 'Export' : '导出'}</button></div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-row-av" style="background:linear-gradient(135deg,#00c46a,#008a4a)">📥</div>
+          <div class="admin-row-info"><div class="admin-row-name">${data.lang === 'en' ? 'Import backup' : '导入数据备份'}</div><div class="admin-row-sub">${data.lang === 'en' ? 'Restore from JSON file' : '从 JSON 文件恢复数据'}</div></div>
+          <div class="admin-row-actions"><button class="admin-btn" id="adminImportBtn">${data.lang === 'en' ? 'Import' : '导入'}</button></div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-row-av" style="background:linear-gradient(135deg,#ffb020,#cc7a00)">🧹</div>
+          <div class="admin-row-info"><div class="admin-row-name">${data.lang === 'en' ? 'Clear all video files' : '清除所有视频文件'}</div><div class="admin-row-sub">${data.lang === 'en' ? 'Delete ' + blobCount + ' video files (metadata kept)' : '删除 IndexedDB 中的 ' + blobCount + ' 个视频文件（保留元数据）'}</div></div>
+          <div class="admin-row-actions"><button class="admin-btn warn" id="adminClearVideosBtn">${data.lang === 'en' ? 'Clear' : '清除视频'}</button></div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-row-av" style="background:linear-gradient(135deg,#6c5ce7,#4a3ab0)">🔄</div>
+          <div class="admin-row-info"><div class="admin-row-name">${data.lang === 'en' ? 'Reset all data' : '重置所有数据'}</div><div class="admin-row-sub">${data.lang === 'en' ? 'Clear users, channels, videos, comments, subscriptions' : '清空用户、频道、视频、评论、订阅（保留视频文件）'}</div></div>
+          <div class="admin-row-actions"><button class="admin-btn warn" id="adminResetDataBtn">${data.lang === 'en' ? 'Reset' : '重置'}</button></div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">👥</div><div><div class="admin-section-title">${data.lang === 'en' ? 'User Management' : '用户管理'}</div><div class="admin-section-desc">${userCount} ${data.lang === 'en' ? 'users' : '个用户'}</div></div></div>
+        ${userCount === 0
+          ? `<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px">${data.lang === 'en' ? 'No users' : '暂无用户'}</div>`
+          : data.users.map(u => {
+            const uCh = getChannelByOwner(u.id);
+            const uVidCount = uCh ? data.videos.filter(v => v.channelId === uCh.id).length : 0;
+            return `<div class="admin-row">
+              ${u.avatar ? `<div class="admin-row-av" style="background-image:url('${esc(u.avatar)}')"></div>` : `<div class="admin-row-av" style="background:${colorOf(u.username)}">${esc(u.username[0].toUpperCase())}</div>`}
+              <div class="admin-row-info">
+                <div class="admin-row-name">${esc(u.username)}</div>
+                <div class="admin-row-sub">
+                  <span>ID: ${esc(u.id)}</span>
+                  <span>${uCh ? (data.lang === 'en' ? 'Channel: ' : '频道：') + esc(uCh.name) : (data.lang === 'en' ? 'No channel' : '无频道')}</span>
+                  <span>${uVidCount} ${data.lang === 'en' ? 'videos' : '个视频'}</span>
+                </div>
+              </div>
+              <div class="admin-row-actions"><button class="admin-btn danger" data-admin-del-user="${u.id}">${data.lang === 'en' ? 'Delete' : '删除'}</button></div>
+            </div>`;
+          }).join('')}
+      </div>
+
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">📺</div><div><div class="admin-section-title">${data.lang === 'en' ? 'Channel Management' : '频道管理'}</div><div class="admin-section-desc">${channelCount} ${data.lang === 'en' ? 'channels' : '个频道'}</div></div></div>
+        ${channelCount === 0
+          ? `<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px">${data.lang === 'en' ? 'No channels' : '暂无频道'}</div>`
+          : data.channels.map(c => {
+            const owner = getUser(c.ownerId);
+            const vidCount = data.videos.filter(v => v.channelId === c.id).length;
+            return `<div class="admin-row">
+              <div class="admin-row-av" style="background:${colorOf(c.name)}">${esc(c.name[0].toUpperCase())}</div>
+              <div class="admin-row-info">
+                <div class="admin-row-name">${esc(c.name)}</div>
+                <div class="admin-row-sub">
+                  <span>${data.lang === 'en' ? 'Owner' : '所有者'}: ${owner ? esc(owner.username) : '—'}</span>
+                  <span>${vidCount} ${data.lang === 'en' ? 'videos' : '个视频'}</span>
+                  <span>${getSubscriberCount(c.id)} ${data.lang === 'en' ? 'subs' : '位订阅者'}</span>
+                  <span>${c.enabled ? '<span style="color:#00c46a">● ' + (data.lang === 'en' ? 'Enabled' : '已启用') + '</span>' : '<span style="color:#ff5c5c">● ' + (data.lang === 'en' ? 'Disabled' : '已停用') + '</span>'}</span>
+                </div>
+              </div>
+              <div class="admin-row-actions">
+                <button class="admin-btn" data-admin-toggle-ch="${c.id}">${c.enabled ? (data.lang === 'en' ? 'Disable' : '停用') : (data.lang === 'en' ? 'Enable' : '启用')}</button>
+                <button class="admin-btn danger" data-admin-del-ch="${c.id}">${data.lang === 'en' ? 'Delete' : '删除'}</button>
+              </div>
+            </div>`;
+          }).join('')}
+      </div>
+
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">🎬</div><div><div class="admin-section-title">${data.lang === 'en' ? 'Video Management' : '视频管理'}</div><div class="admin-section-desc">${videoCount} ${data.lang === 'en' ? 'videos' : '个视频'}</div></div></div>
+        ${videoCount === 0
+          ? `<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px">${data.lang === 'en' ? 'No videos' : '暂无视频'}</div>`
+          : data.videos.map(v => {
+            const ch = getChannel(v.channelId);
+            return `<div class="admin-row">
+              <div class="admin-row-av" style="background:var(--surface-3);font-size:16px">🎬</div>
+              <div class="admin-row-info">
+                <div class="admin-row-name">${esc(v.title)}</div>
+                <div class="admin-row-sub">
+                  <span>${ch ? esc(ch.name) : '—'}</span>
+                  <span>${fmtViews(v.views)} ${data.lang === 'en' ? 'views' : '次观看'}</span>
+                  <span>${fmtDuration(v.duration)}</span>
+                  <span>${fmtSize(v.size || 0)}</span>
+                </div>
+              </div>
+              <div class="admin-row-actions">
+                <button class="admin-btn" data-admin-view-vid="${v.id}">${data.lang === 'en' ? 'View' : '查看'}</button>
+                <button class="admin-btn danger" data-admin-del-vid="${v.id}">${data.lang === 'en' ? 'Delete' : '删除'}</button>
+              </div>
+            </div>`;
+          }).join('')}
+      </div>
+
+      <div class="admin-danger-zone">
+        <div class="admin-section-head"><div class="admin-section-icon">☢️</div><div><div class="admin-section-title" style="color:#ff5c5c">${data.lang === 'en' ? 'Danger Zone' : '危险操作'}</div><div class="admin-section-desc">${data.lang === 'en' ? 'These actions cannot be undone' : '以下操作不可撤销，请谨慎执行'}</div></div></div>
+        <div class="admin-row">
+          <div class="admin-row-av" style="background:rgba(255,0,51,.15);color:#ff5c5c">💣</div>
+          <div class="admin-row-info">
+            <div class="admin-row-name" style="color:#ff5c5c">${data.lang === 'en' ? 'Clear all files' : '清除所有文件'}</div>
+            <div class="admin-row-sub" style="color:#ff8a8a">${data.lang === 'en' ? `Permanently delete: ${userCount} users · ${channelCount} channels · ${videoCount} videos · ${blobCount} video files` : `彻底删除：${userCount} 个用户 · ${channelCount} 个频道 · ${videoCount} 个视频 · ${blobCount} 个视频文件`}</div>
+          </div>
+        </div>
+        <div class="admin-danger-actions">
+          <button class="admin-danger-btn nuke" id="adminNukeBtn">☢️ ${data.lang === 'en' ? 'Clear all files (no residue)' : '清除所有文件（无残留）'}</button>
+          <button class="admin-danger-btn secondary" id="adminReloadBtn">🔄 ${data.lang === 'en' ? 'Reload page' : '重新加载页面'}</button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="admin-section-head"><div class="admin-section-icon">📋</div><div><div class="admin-section-title">${data.lang === 'en' ? 'Operation Log' : '操作日志'}</div></div></div>
+        <div class="admin-log" id="adminLogBox">
+          ${adminLogs.length === 0 ? `<div class="log-info">[${data.lang === 'en' ? 'System' : '系统'}] ${data.lang === 'en' ? 'Panel loaded, waiting for operations...' : '服务器设置面板已加载，等待操作...'}</div>`
+            : adminLogs.map(l => `<div class="log-${l.type}">[${l.time}] ${esc(l.msg)}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  renderSidebar();
+  adminLog(data.lang === 'en' ? 'Panel opened' : '服务器设置面板已打开', 'ok');
+
+  $('adminExportBtn').addEventListener('click', () => { adminLog(data.lang === 'en' ? 'Exporting...' : '开始导出...', 'info'); exportData(); adminLog(data.lang === 'en' ? 'Export done' : '数据导出完成', 'ok'); });
+  $('adminImportBtn').addEventListener('click', () => { adminLog(data.lang === 'en' ? 'Selecting file...' : '等待选择导入文件...', 'info'); importData(); });
+  $('adminClearVideosBtn').addEventListener('click', async () => {
+    const msg = data.lang === 'en' ? `Clear all video files? This will delete ${blobCount} files (${fmtSize(totalBlobSize)}).` : `确定清除所有视频文件吗？将删除 ${blobCount} 个文件（${fmtSize(totalBlobSize)}）。`;
+    if (!confirm(msg)) return;
+    try { await clearAllBlobs(); adminLog(data.lang === 'en' ? `Cleared ${blobCount} video files` : `已清除 ${blobCount} 个视频文件`, 'ok'); toast(data.lang === 'en' ? 'All video files cleared' : '所有视频文件已清除', 'success'); renderAdmin(); }
+    catch(e){ adminLog('Error: ' + e.message, 'err'); toast('Error', 'error'); }
+  });
+  $('adminResetDataBtn').addEventListener('click', () => {
+    const c1 = confirm(data.lang === 'en' ? `Reset all data? This will clear users, channels, videos, comments, subscriptions (video files kept).` : `确定重置所有数据吗？将清空用户、频道、视频元数据、评论、订阅（视频文件保留）。`);
+    if (!c1) return;
+    const answer = prompt(data.lang === 'en' ? 'Type RESET to confirm:' : '输入 RESET 确认重置：');
+    if (answer !== 'RESET'){ toast(data.lang === 'en' ? 'Cancelled' : '已取消'); return; }
+    data.users = []; data.channels = []; data.videos = []; data.subscriptions = []; data.currentUserId = null;
+    saveData(); adminLog(data.lang === 'en' ? 'All data reset' : '数据已重置', 'warn');
+    toast(data.lang === 'en' ? 'Data reset' : '数据已重置', 'success');
+    renderAdmin(); renderTopRight();
+  });
+  $('adminNukeBtn').addEventListener('click', () => {
+    const c1 = confirm(data.lang === 'en' ? `⚠️ DANGER\n\nPermanently delete:\n• ${userCount} users\n• ${channelCount} channels\n• ${videoCount} videos (${blobCount} files, ${fmtSize(totalBlobSize)})\n• ${commentCount} comments\n• ${subCount} subscriptions\n• All LocalStorage/IndexedDB/SessionStorage\n\nThis cannot be undone!` : `⚠️ 危险操作确认\n\n即将永久清除：\n• ${userCount} 个用户\n• ${channelCount} 个频道\n• ${videoCount} 个视频（含 ${blobCount} 个文件，${fmtSize(totalBlobSize)}）\n• ${commentCount} 条评论\n• ${subCount} 个订阅\n• 所有 LocalStorage/IndexedDB/SessionStorage\n\n此操作不可撤销！`);
+    if (!c1) return;
+    const answer = prompt(data.lang === 'en' ? 'Type DELETE ALL to confirm:' : '为了确认，请输入：DELETE ALL');
+    if (answer !== 'DELETE ALL'){ toast(data.lang === 'en' ? 'Mismatch, cancelled' : '输入不匹配，已取消', 'error'); return; }
+    adminLog('=== Nuking all files ===', 'warn');
+    (async () => {
+      try {
+        adminLog('Clearing IndexedDB blobs...', 'info');
+        try { await clearAllBlobs(); } catch(e){}
+        adminLog('Deleting IndexedDB database...', 'info');
+        await deleteIDBDatabase();
+        adminLog('Clearing LocalStorage...', 'info'); localStorage.clear();
+        adminLog('Clearing SessionStorage...', 'info'); sessionStorage.clear();
+        adminLog('Clearing Cookies...', 'info');
+        document.cookie.split(';').forEach(c => { const name = c.split('=')[0].trim(); if (name) document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'; });
+        adminLog('=== Complete, reloading ===', 'ok');
+        toast(data.lang === 'en' ? 'All files cleared. Reloading...' : '所有文件已清除，页面即将重新加载...', 'success');
+        setTimeout(() => { location.hash = '#/'; location.reload(); }, 1600);
+      } catch(e){ adminLog('Error: ' + e.message, 'err'); toast('Error: ' + e.message, 'error'); }
+    })();
+  });
+  $('adminReloadBtn').addEventListener('click', () => location.reload());
+
+  document.querySelectorAll('[data-admin-del-user]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const u = getUser(btn.dataset.adminDelUser);
+      if (!u) return;
+      const uCh = getChannelByOwner(u.id);
+      const uVids = uCh ? data.videos.filter(v => v.channelId === uCh.id) : [];
+      if (!confirm(data.lang === 'en' ? `Delete user "${u.username}" and ${uVids.length} videos?` : `删除用户「${u.username}」及其 ${uVids.length} 个视频？`)) return;
+      if (!confirm(data.lang === 'en' ? 'Confirm again?' : '再次确认删除？')) return;
+      (async () => {
+        for (const v of uVids){ try { await deleteBlob(v.id); } catch(e){} }
+        if (uCh) data.videos = data.videos.filter(v => v.channelId !== uCh.id);
+        data.channels = data.channels.filter(c => c.ownerId !== u.id);
+        data.subscriptions = data.subscriptions.filter(s => s.userId !== u.id);
+        data.videos.forEach(v => {
+          if (Array.isArray(v.comments)) v.comments = v.comments.filter(c => c.userId !== u.id);
+          if (Array.isArray(v.likes)) v.likes = v.likes.filter(id => id !== u.id);
+          if (Array.isArray(v.dislikes)) v.dislikes = v.dislikes.filter(id => id !== u.id);
+        });
+        data.users = data.users.filter(x => x.id !== u.id);
+        if (data.currentUserId === u.id) data.currentUserId = null;
+        saveData();
+        adminLog(`Deleted user "${u.username}"`, 'ok');
+        toast(data.lang === 'en' ? 'User deleted' : '用户已删除');
+        renderTopRight(); renderSidebar(); renderAdmin();
+      })();
+    });
+  });
+  document.querySelectorAll('[data-admin-toggle-ch]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const c = getChannel(btn.dataset.adminToggleCh);
+      if (!c) return;
+      c.enabled = !c.enabled;
+      saveData();
+      adminLog(`Channel "${c.name}" ${c.enabled ? 'enabled' : 'disabled'}`, 'warn');
+      toast(data.lang === 'en' ? (c.enabled ? 'Enabled' : 'Disabled') : (c.enabled ? '已启用' : '已停用'));
+      renderAdmin();
+    });
+  });
+  document.querySelectorAll('[data-admin-del-ch]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const c = getChannel(btn.dataset.adminDelCh);
+      if (!c) return;
+      const vids = data.videos.filter(v => v.channelId === c.id);
+      if (!confirm(data.lang === 'en' ? `Delete channel "${c.name}" and ${vids.length} videos?` : `删除频道「${c.name}」及其 ${vids.length} 个视频？`)) return;
+      if (!confirm(data.lang === 'en' ? 'Confirm again?' : '再次确认？')) return;
+      for (const v of vids){ try { await deleteBlob(v.id); } catch(e){} }
+      data.videos = data.videos.filter(v => v.channelId !== c.id);
+      data.channels = data.channels.filter(x => x.id !== c.id);
+      data.subscriptions = data.subscriptions.filter(s => s.channelId !== c.id);
+      saveData();
+      adminLog(`Deleted channel "${c.name}"`, 'ok');
+      toast(data.lang === 'en' ? 'Channel deleted' : '频道已删除');
+      renderAdmin();
+    });
+  });
+  document.querySelectorAll('[data-admin-view-vid]').forEach(btn => {
+    btn.addEventListener('click', () => { location.hash = '#/watch/' + btn.dataset.adminViewVid; });
+  });
+  document.querySelectorAll('[data-admin-del-vid]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const v = getVideo(btn.dataset.adminDelVid);
+      if (!v) return;
+      if (!confirm(data.lang === 'en' ? `Delete video "${v.title}"?` : `删除视频「${v.title}」？`)) return;
+      try { await deleteBlob(v.id); } catch(e){}
+      data.videos = data.videos.filter(x => x.id !== v.id);
+      saveData();
+      adminLog(`Deleted video "${v.title}"`, 'ok');
+      toast(data.lang === 'en' ? 'Video deleted' : '视频已删除');
+      renderAdmin();
+    });
+  });
+}
+
+/* ===== 事件绑定 ===== */
+$('menuBtn').addEventListener('click', () => {
+  if (window.innerWidth <= 900) document.body.classList.toggle('sidebar-open');
+  else document.body.classList.toggle('collapsed');
+});
+
+$('searchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const q = $('searchInput').value.trim();
+  if (!q) return;
+  if (/ofiebytebox\.html\/officalsettings/i.test(q) || /yourtube\.html\/officalsettings/i.test(q) || /^\/?officalsettings\/?$/i.test(q) || q.toLowerCase() === 'officalsettings'){
+    $('searchInput').value = '';
+    location.hash = '#/officalsettings';
+    return;
+  }
+  location.hash = '#/search?q=' + encodeURIComponent(q);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#userMenu') && !e.target.closest('#userBtn')) closeDropdown();
+});
+
+window.addEventListener('hashchange', route);
+
+/* ===== 启动 ===== */
+async function boot(){
+  const currentPath = location.pathname;
+  if (/\/officalsettings\/?$/i.test(location.pathname)){
+    location.replace(location.pathname.replace(/\/officalsettings\/?$/i, '') + '#/officalsettings');
+    return;
+  }
+
+  loadData();
+  applyTheme();
+  document.documentElement.lang = data.lang === 'zh' ? 'zh-CN' : 'en';
+
+  initIDB().catch(e => console.warn('IndexedDB 预热失败，将在使用时重试:', e));
+
+  $('searchInput').placeholder = t('searchPlaceholder');
+
+  renderTopRight();
+  renderSidebar();
+  route();
+}
+boot();
+</script>
+</body>
+</html>
